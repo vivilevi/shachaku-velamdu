@@ -110,6 +110,12 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 .rbtn.on{background:#ff4757;animation:pulseR 1s infinite;}
 .rbtn.pl{background:#45aaf2;}
 .lblu{background:#f0f0f0;border:1.5px solid #ddd;border-radius:8px;padding:6px 10px;font-family:"Fredoka One",cursive;font-size:.78rem;cursor:pointer;color:var(--dk);}
+.hint-rec-row{display:flex;gap:6px;align-items:center;margin-bottom:7px;background:#e8f0ff;border-radius:10px;padding:7px 9px;}
+.hint-txt{flex:1;border:1.5px solid #c8d8ff;border-radius:8px;padding:6px 9px;font-family:"Varela Round",sans-serif;font-size:.82rem;text-align:right;outline:none;background:#fff;}
+.hint-rec-btn{border:none;border-radius:8px;padding:5px 9px;font-family:"Fredoka One",cursive;font-size:.75rem;cursor:pointer;color:#fff;background:var(--pu);white-space:nowrap;}
+.hint-rec-btn.on{background:#ff4757;animation:pulseR 1s infinite;}
+.hint-play-btn{border:none;border-radius:8px;padding:5px 9px;font-family:"Fredoka One",cursive;font-size:.75rem;cursor:pointer;color:#fff;background:#45aaf2;}
+.hint-del-btn{border:none;border-radius:8px;padding:5px 9px;font-family:"Fredoka One",cursive;font-size:.75rem;cursor:pointer;background:#ffe8e8;color:var(--p);}
 .recst{text-align:center;font-family:"Fredoka One",cursive;font-size:.82rem;color:#999;min-height:16px;margin:4px 0;}
 .modal-btns{display:flex;gap:9px;justify-content:center;margin-top:7px;}
 .mok{background:var(--g);border:none;border-radius:28px;padding:10px 22px;font-family:"Fredoka One",cursive;font-size:.95rem;color:#fff;cursor:pointer;box-shadow:0 4px 0 #18a358;}
@@ -363,11 +369,9 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
     </div>
     <div class="sbox" style="background:#f0f8ff">
       <div class="slbl" style="color:#3a7bd5;font-size:.85rem">💬 שאלות שיח (מצב מטפל)</div>
-      <div style="font-size:.72rem;color:#aaa;margin-bottom:6px">כל שורה = שאלה אחת. לחצי 🔊 לשמוע כל שאלה בנפרד.</div>
-      <textarea class="sin" id="modal-hints" rows="3" placeholder="מה עוד אתה רואה?&#10;מה הצבע שלו?" style="resize:vertical"></textarea>
-      <div class="rrow" style="margin-top:6px">
-        <button class="lblu" onclick="previewHints()">🔊 שמע שאלות</button>
-      </div>
+      <div style="font-size:.72rem;color:#aaa;margin-bottom:8px">הקליטי כל שאלה בקולך – לא רובוט!</div>
+      <div id="hints-rec-list"></div>
+      <button class="lblu" style="width:100%;margin-top:6px;text-align:center" onclick="addHintRow()">➕ הוסף שאלת שיח</button>
     </div>
     <div class="recst" id="recst"></div>
     <div class="modal-btns">
@@ -687,11 +691,87 @@ function openModal(i){
   document.getElementById('a-ind').style.display=hasA?'block':'none';
   document.getElementById('rec-a-btn').textContent='🎤 הקלט';
   document.getElementById('rec-a-btn').classList.remove('on');
+  renderHintRows();
   document.getElementById('vmodal').classList.add('open');
 }
 function closeModal(){stopRec();document.getElementById('vmodal').classList.remove('open');}
 function delRecQ(){modalQUrl=null;document.getElementById('play-q-btn').style.display='none';document.getElementById('del-q-btn').style.display='none';document.getElementById('q-ind').style.display='none';}
 function delRecA(){modalAUrl=null;document.getElementById('play-a-btn').style.display='none';document.getElementById('del-a-btn').style.display='none';document.getElementById('a-ind').style.display='none';}
+
+
+function renderHintRows(){
+  const list=document.getElementById('hints-rec-list');
+  if(!list)return;
+  list.innerHTML='';
+  const z=edZones[modalIdx];
+  const hints=z?.discussHints||[];
+  const audios=z?.discussAudios||[];
+  hints.forEach((h,i)=>addHintRowWith(h, audios[i]||null));
+  if(!hints.length) addHintRowWith('','');
+}
+
+function addHintRow(){
+  addHintRowWith('', null);
+}
+
+function addHintRowWith(txt, audioUrl){
+  const list=document.getElementById('hints-rec-list');
+  if(!list)return;
+  const row=document.createElement('div');
+  row.className='hint-rec-row';
+  row.dataset.audio=audioUrl||'';
+  row.innerHTML=`
+    <input class="hint-txt" type="text" placeholder="מה עוד אתה רואה?" value="${(txt||'').replace(/"/g,'&quot;')}">
+    <button class="hint-rec-btn" onclick="toggleHintRec(this)">🎤</button>
+    ${audioUrl?`<button class="hint-play-btn" onclick="playUrl(this.closest('.hint-rec-row').dataset.audio)">▶</button>`:''}
+    <button class="hint-del-btn" onclick="this.closest('.hint-rec-row').remove()">🗑️</button>`;
+  list.appendChild(row);
+}
+
+let hintRecRow=null;
+function toggleHintRec(btn){
+  const row=btn.closest('.hint-rec-row');
+  if(recOn&&hintRecRow===row){stopRec();return;}
+  if(recOn)stopRec();
+  hintRecRow=row;
+  // Start recording for this hint
+  startHintRec(btn, row);
+}
+
+async function startHintRec(btn, row){
+  try{
+    if(recStream)recStream.getTracks().forEach(t=>t.stop());
+    recStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+    recChunks=[];
+    const mime=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'';
+    mediaRec=new MediaRecorder(recStream,mime?{mimeType:mime}:{});
+    mediaRec.ondataavailable=e=>{if(e.data?.size>0)recChunks.push(e.data);};
+    mediaRec.onstop=()=>{
+      const blob=new Blob(recChunks,{type:mime||'audio/webm'});
+      const fr=new FileReader();
+      fr.onload=ev=>{
+        const dataUrl=ev.target.result;
+        row.dataset.audio=dataUrl;
+        // Add play button if not exists
+        if(!row.querySelector('.hint-play-btn')){
+          const pb=document.createElement('button');
+          pb.className='hint-play-btn';pb.textContent='▶';
+          pb.onclick=()=>playUrl(row.dataset.audio);
+          btn.after(pb);
+        }
+        btn.classList.remove('on');btn.textContent='🎤';
+        recStream?.getTracks().forEach(t=>t.stop());recStream=null;
+        recOn=false;recKey=null;hintRecRow=null;
+        document.getElementById('recst').textContent='✅ הוקלט!';
+      };
+      fr.readAsDataURL(blob);
+    };
+    mediaRec.start(100);recOn=true;recKey='hint';recSec=0;
+    btn.classList.add('on');btn.textContent='⏹ עצור';
+    document.getElementById('recst').textContent='⏺ מקליט...';
+    clearInterval(recTimer);recTimer=setInterval(()=>{recSec++;if(recSec>=20)stopRec();},1000);
+  }catch(e){alert('⚠️ אין גישה למיקרופון');}
+}
 
 function previewHints(){
   const hints = document.getElementById('modal-hints').value.split('\n').map(h=>h.trim()).filter(h=>h);
@@ -708,7 +788,18 @@ function saveModal(){
   z.ttsText=document.getElementById('tts-q').value.trim();
   z.ttsAnswer=document.getElementById('tts-a').value.trim();
   z.emoji=document.getElementById('modal-emoji').value.trim()||'🔍';
-  z.discussHints=document.getElementById('modal-hints').value.split('\n').map(h=>h.trim()).filter(h=>h);
+  // Collect hints from hint rows
+  const hintRows=document.querySelectorAll('.hint-rec-row');
+  z.discussHints=[];
+  z.discussAudios=[];
+  hintRows.forEach(row=>{
+    const txt=row.querySelector('.hint-txt')?.value?.trim()||'';
+    const audio=row.dataset.audio||null;
+    if(txt||audio){
+      z.discussHints.push(txt);
+      z.discussAudios.push(audio);
+    }
+  });
   if(!z.label&&z.ttsText)z.label=z.ttsText;
   z.audioQUrl=modalQUrl||null;
   z.audioAUrl=modalAUrl||null;
@@ -776,34 +867,34 @@ function doSave(){
   const g=buildGame();
   savedGames=[g,...savedGames.filter(x=>x.id!==g.id)];
   edGame=g;
-  // Try localStorage
-  let lsOk=false;
-  try{localStorage.setItem('shachaku',JSON.stringify(savedGames));lsOk=true;}catch(e){}
-  // ALWAYS auto-download JSON as backup
-  autoDownload();
-  toast(lsOk?'💾 נשמר! קובץ JSON ירד אוטומטית':'💾 נשמר! שמרי את ה-JSON שירד!');
+  downloadUpdatedHTML();
+  toast('💾 נשמר! קובץ index.html חדש ירד – העלי אותו ל-GitHub');
   return g;
 }
-function autoDownload(){
-  try{
-    const b=new Blob([JSON.stringify(savedGames,null,2)],{type:'application/json'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(b);
-    a.download='משחקים-שלי.json';
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-  }catch(e){}
+
+function downloadUpdatedHTML(){
+  // Get current page HTML and replace the embedded games with updated ones
+  const currentHTML = document.documentElement.outerHTML;
+  const gamesJSON = JSON.stringify(savedGames, null, 2);
+  // Replace EMBEDDED_GAMES content
+  const updated = currentHTML.replace(
+    /const EMBEDDED_GAMES = \[[\s\S]*?\];(\s*\/\/ ═══ end)/,
+    'const EMBEDDED_GAMES = ' + gamesJSON + ';$1'
+  ).replace(
+    /const EMBEDDED_GAMES = \[[\s\S]*?\];(\s*
+\s*window)/,
+    'const EMBEDDED_GAMES = ' + gamesJSON + ';$1'
+  );
+  const blob = new Blob([updated], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'index.html';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
 }
 function doSavePlay(){const g=doSave();if(g)showIntro(g);}
 function loadGames(){
-  // Merge localStorage with in-memory savedGames (don't lose unsaved games)
-  try{
-    const stored=JSON.parse(localStorage.getItem('shachaku')||'[]');
-    // Add stored games that aren't already in memory
-    stored.forEach(g=>{
-      if(!savedGames.find(x=>x.id===g.id)) savedGames.push(g);
-    });
-  }catch(e){}
+  // savedGames already in memory from EMBEDDED_GAMES - just render
   renderHome();
 }
 function renderHome(){
@@ -837,7 +928,11 @@ function gAction(action, id){
 }
 
 function delGame(id){if(!confirm('למחוק?'))return;savedGames=savedGames.filter(g=>g.id!==id);try{localStorage.setItem('shachaku',JSON.stringify(savedGames));}catch(e){}renderHome();}
-function exportGames(){if(!savedGames.length){toast('אין משחקים');return;}const b=new Blob([JSON.stringify(savedGames,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='משחקים-שלי.json';a.click();toast('📤 יוצא!');}
+function exportGames(){
+  if(!savedGames.length){toast('אין משחקים');return;}
+  downloadUpdatedHTML();
+  toast('📤 קובץ index.html ירד – העלי ל-GitHub!');
+}
 function importGames(e){
   const file=e.target.files?.[0];if(!file)return;
   const reader=new FileReader();
@@ -937,8 +1032,14 @@ function onCorrect(task){
     document.getElementById('th-answer').textContent='מצאת! 🎉'+(ans?' – '+ans:'');
     // Hints
     const hints=task.discussHints?.length?task.discussHints:['מה עוד אתה רואה?','מה הצבע שלו?','איפה עוד ראית כזה?'];
+    const audios=task.discussAudios||[];
     const hEl=document.getElementById('th-hints');hEl.innerHTML='';
-    hints.forEach(h=>{const c=document.createElement('div');c.className='hint-chip';c.textContent='💬 '+h;c.onclick=()=>speak(h);hEl.appendChild(c);});
+    hints.forEach((h,i)=>{
+      const c=document.createElement('div');c.className='hint-chip';
+      c.innerHTML='💬 '+h+(audios[i]?' 🔊':'');
+      c.onclick=()=>{if(audios[i])playUrl(audios[i]);else speak(h);};
+      hEl.appendChild(c);
+    });
     // Play answer button
     const pb=document.getElementById('th-play-btn');
     pb.onclick=()=>spOp(task.audioAUrl,ans,null);
