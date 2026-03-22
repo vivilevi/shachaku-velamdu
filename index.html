@@ -796,7 +796,14 @@ function autoDownload(){
 }
 function doSavePlay(){const g=doSave();if(g)showIntro(g);}
 function loadGames(){
-  try{savedGames=JSON.parse(localStorage.getItem('shachaku')||'[]');}catch(e){savedGames=[];}
+  // Merge localStorage with in-memory savedGames (don't lose unsaved games)
+  try{
+    const stored=JSON.parse(localStorage.getItem('shachaku')||'[]');
+    // Add stored games that aren't already in memory
+    stored.forEach(g=>{
+      if(!savedGames.find(x=>x.id===g.id)) savedGames.push(g);
+    });
+  }catch(e){}
   renderHome();
 }
 function renderHome(){
