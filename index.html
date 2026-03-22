@@ -199,7 +199,8 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
   <button class="bigbtn" onclick="openNewEditor()">✏️ צור משחק חדש</button>
   <div class="home-acts">
     <button class="hact" onclick="exportGames()">📤 ייצא</button>
-    <label class="hact" style="cursor:pointer">📥 ייבא<input type="file" accept=".json" onchange="importGames(event)" style="display:none"></label>
+    <label class="hact" style="cursor:pointer" onclick="document.getElementById('import-input').click()">📥 ייבא</label>
+    <input type="file" id="import-input" accept=".json" onchange="importGames(event)" style="position:fixed;top:-999px;left:-999px;opacity:0">
   </div>
   <div class="saved-sec" id="saved-sec" style="display:none">
     <div class="saved-lbl">🕹️ המשחקים שלי</div>
@@ -939,16 +940,20 @@ function importGames(e){
   reader.onload=ev=>{
     try{
       const data=JSON.parse(ev.target.result);
-      if(!Array.isArray(data))throw 0;
-      const ids=savedGames.map(g=>g.id);
-      const nw=data.filter(g=>!ids.includes(g.id));
-      savedGames=[...savedGames,...nw];
-      try{localStorage.setItem('shachaku',JSON.stringify(savedGames));}catch(e){}
-      renderHome();toast('✅ יובאו '+nw.length+' משחקים');
-    }catch(ex){toast('❌ קובץ לא תקין');}
+      if(!Array.isArray(data))throw new Error('not array');
+      // Replace all games with imported ones
+      savedGames=data;
+      renderHome();
+      toast('✅ יובאו '+data.length+' משחקים');
+    }catch(ex){
+      toast('❌ קובץ לא תקין: '+ex.message);
+    }
   };
-  reader.readAsText(file);e.target.value='';
+  reader.onerror=()=>toast('❌ שגיאה בקריאת הקובץ');
+  reader.readAsText(file);
+  e.target.value='';
 }
+
 function shareGame(id){
   const game=savedGames.find(g=>g.id===id);if(!game)return;
   const html=buildPlayerOnlyHTML(game);
