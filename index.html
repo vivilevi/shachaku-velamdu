@@ -776,8 +776,23 @@ function doSave(){
   const g=buildGame();
   savedGames=[g,...savedGames.filter(x=>x.id!==g.id)];
   edGame=g;
-  try{localStorage.setItem('shachaku',JSON.stringify(savedGames));}catch(e){}
-  toast('💾 נשמר!');return g;
+  // Try localStorage
+  let lsOk=false;
+  try{localStorage.setItem('shachaku',JSON.stringify(savedGames));lsOk=true;}catch(e){}
+  // ALWAYS auto-download JSON as backup
+  autoDownload();
+  toast(lsOk?'💾 נשמר! קובץ JSON ירד אוטומטית':'💾 נשמר! שמרי את ה-JSON שירד!');
+  return g;
+}
+function autoDownload(){
+  try{
+    const b=new Blob([JSON.stringify(savedGames,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b);
+    a.download='משחקים-שלי.json';
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }catch(e){}
 }
 function doSavePlay(){const g=doSave();if(g)showIntro(g);}
 function loadGames(){
