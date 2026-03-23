@@ -437,9 +437,10 @@ function sbHeaders(extra){
 }
 
 async function sbGet() {
-  const r = await fetch(SB_URL+'/rest/v1/games?select=id,name,share_id,data&order=created_at.desc', {
+  // Fetch full data for each game
+  const r = await fetch(SB_URL+'/rest/v1/games?select=id,name,share_id,data&order=created_at.desc&limit=50', {
     method: 'GET',
-    headers: sbHeaders()
+    headers: sbHeaders({'Prefer': 'count=none'})
   });
   if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
   return r.json();
@@ -482,9 +483,18 @@ async function sbGetByShare(shareId) {
 async function loadGamesFromDB() {
   try{
     const rows = await sbGet();
-    savedGames = rows.map(r=>({...r.data, _dbid:r.id, _share:r.share_id, name:r.name}));
+    savedGames = rows.map(r=>{
+      const game = r.data || {};
+      return {...game, _dbid:r.id, _share:r.share_id, name:r.name||game.name};
+    });
+    // Cache in localStorage as backup
+    try{
+      const light = savedGames.map(g=>({...g}));
+      localStorage.setItem('shachaku', JSON.stringify(light));
+    }catch(e){}
   }catch(e){
     console.error('load error:',e);
+    // Fallback to localStorage
     try{const s=localStorage.getItem('shachaku');if(s)savedGames=JSON.parse(s);}catch(e2){}
   }
   renderHome();
