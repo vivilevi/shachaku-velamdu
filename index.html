@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>🎮 שחקו ולמדו</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap" rel="stylesheet">
 <style>
@@ -11,42 +11,35 @@
 body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 .scr{display:none;min-height:100vh;flex-direction:column;}
 .scr.on{display:flex;}
-
-/* HOME */
 #home{background:linear-gradient(150deg,#667eea,#764ba2 50%,#f093fb);align-items:center;justify-content:center;padding:36px 20px;gap:18px;text-align:center;}
 .logo{font-size:4.5rem;animation:floatY 3s ease-in-out infinite;}
 .htitle{font-family:"Fredoka One",cursive;font-size:clamp(2rem,8vw,4.5rem);color:#fff;text-shadow:3px 3px 0 rgba(0,0,0,.2);line-height:1.1;}
-.hsub{font-size:clamp(.9rem,3.5vw,1.2rem);color:rgba(255,255,255,.85);font-weight:700;}
+.hsub{font-size:1rem;color:rgba(255,255,255,.85);font-weight:700;}
 .bigbtn{background:#fff;border:none;border-radius:50px;padding:15px 30px;font-family:"Fredoka One",cursive;font-size:1.35rem;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.15);color:#764ba2;width:100%;max-width:280px;}
 .bigbtn:active{transform:translateY(4px);}
-.home-acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-.hact{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);border-radius:50px;padding:10px 20px;font-family:"Fredoka One",cursive;font-size:1rem;color:#fff;cursor:pointer;}
 .saved-sec{width:100%;max-width:640px;}
 .saved-lbl{color:rgba(255,255,255,.8);font-weight:700;font-size:.95rem;margin-bottom:10px;}
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;max-height:300px;overflow-y:auto;padding:4px;}
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;max-height:320px;overflow-y:auto;padding:4px;}
 .gcard{background:#fff;border-radius:14px;padding:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);text-align:center;}
 .gcard img{width:100%;aspect-ratio:16/9;border-radius:8px;object-fit:cover;background:#eee;display:block;margin-bottom:5px;}
-.gcard-name{font-family:"Fredoka One",cursive;font-size:.88rem;color:var(--dk);margin-bottom:4px;}
+.gcard-name{font-family:"Fredoka One",cursive;font-size:.88rem;color:var(--dk);margin-bottom:5px;}
 .gcard-btns{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;}
-.gcbtn{border:none;border-radius:8px;padding:5px 10px;font-size:.78rem;cursor:pointer;font-weight:700;}
+.gcbtn{border:none;border-radius:8px;padding:5px 9px;font-size:.78rem;cursor:pointer;font-weight:700;}
 .gcbtn.play{background:var(--g);color:#fff;}
 .gcbtn.edit{background:#e8f0ff;color:var(--pu);}
 .gcbtn.share{background:#fff3cd;color:#856404;}
 .gcbtn.del{background:#ffe8e8;color:var(--p);}
 .empty-msg{color:rgba(255,255,255,.65);font-size:.95rem;}
-
-/* INTRO */
+.loading-msg{color:rgba(255,255,255,.8);font-size:1rem;font-family:"Fredoka One",cursive;}
 #intro{background:linear-gradient(160deg,#1a1a2e,#16213e,#0f3460);align-items:center;justify-content:center;padding:28px 20px;gap:16px;text-align:center;}
 .intro-img{width:100%;max-width:420px;border-radius:22px;box-shadow:0 12px 40px rgba(0,0,0,.5);}
-.intro-title{font-family:"Fredoka One",cursive;font-size:clamp(1.8rem,7vw,3.5rem);color:#fff;text-shadow:3px 3px 0 rgba(0,0,0,.3);padding:0 10px;}
+.intro-title{font-family:"Fredoka One",cursive;font-size:clamp(1.8rem,7vw,3.5rem);color:#fff;padding:0 10px;}
 .intro-sub{color:rgba(255,255,255,.7);font-size:1.1rem;font-weight:700;}
 .intro-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 .ibtn{border:none;border-radius:50px;padding:14px 28px;font-family:"Fredoka One",cursive;font-size:1.2rem;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.2);}
 .ibtn:active{transform:translateY(4px);}
 .ibtn.play{background:var(--g);color:#fff;}
 .ibtn.back{background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.3);}
-
-/* EDITOR */
 #editor{background:#f0f4ff;}
 .topbar{background:#fff;padding:10px 14px;display:flex;align-items:center;gap:7px;box-shadow:0 2px 10px rgba(0,0,0,.08);position:sticky;top:0;z-index:100;flex-wrap:wrap;}
 .topbar-name{flex:1;border:none;outline:none;font-family:"Fredoka One",cursive;font-size:1.15rem;background:transparent;min-width:90px;text-align:right;}
@@ -59,29 +52,20 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 .zinput{border:1.5px solid #ddd;border-radius:9px;padding:7px 10px;font-family:"Varela Round",sans-serif;font-size:.88rem;outline:none;text-align:right;width:100%;transition:border-color .2s;}
 .zinput:focus{border-color:var(--pu);}
 .zinput.ans{background:#f0fff4;border-color:#b2dfb2;}
-
-/* ZONE ROWS */
-.zone-row{background:#f8f8ff;border:2px solid #e8e0ff;border-radius:14px;padding:10px 11px;margin-bottom:8px;}
+.zone-row{background:#f8f8ff;border:2px solid #e8e0ff;border-radius:14px;padding:10px 11px;margin-bottom:8px;transition:opacity .2s;}
+.zone-row.dragging{opacity:.35;}
+.zone-row.drag-over{border-color:var(--pu);background:#f0e8ff;}
 .zone-top{display:flex;align-items:flex-start;gap:8px;}
+.drag-handle{font-size:1.2rem;cursor:grab;color:#ccc;padding:2px 4px;user-select:none;-webkit-user-select:none;touch-action:none;flex-shrink:0;margin-top:3px;}
 .zone-num{color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Fredoka One",cursive;font-size:.82rem;flex-shrink:0;margin-top:4px;}
 .zone-fields{flex:1;display:flex;flex-direction:column;gap:5px;min-width:130px;}
 .zone-acts{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
 .zact{background:#f0f0f0;border:none;border-radius:8px;padding:6px 10px;font-size:.8rem;cursor:pointer;font-weight:700;white-space:nowrap;}
-.drag-handle{font-size:1.2rem;cursor:grab;color:#ccc;padding:2px 4px;user-select:none;-webkit-user-select:none;touch-action:none;flex-shrink:0;margin-top:3px;}
-.drag-handle:active{cursor:grabbing;color:var(--pu);}
-.zone-row.dragging{opacity:.35;box-shadow:0 8px 24px rgba(165,94,234,.3);}
-.zone-row.drag-over{border-color:var(--pu);background:#f0e8ff;}
-.zact:active{opacity:.6;}
 .zact.haudio{background:#e8ffe8;}
-
-/* DRAW */
 .mbtn{background:#f3f3f3;border:2px solid #ddd;border-radius:10px;padding:7px 12px;font-size:.85rem;cursor:pointer;font-weight:700;color:var(--dk);}
 .mbtn.act{background:#f0e8ff;border-color:var(--pu);color:var(--pu);}
 .cvswrap{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);position:relative;}
-#ecvs{display:block;width:100%;touch-action:none;user-select:none;-webkit-user-select:none;}
 .cvstip{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;padding:5px 13px;border-radius:30px;font-size:.78rem;font-weight:700;pointer-events:none;white-space:nowrap;}
-
-/* RECORDING */
 .rec-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;}
 .rrec{border:none;border-radius:8px;padding:6px 10px;font-family:"Fredoka One",cursive;font-size:.78rem;cursor:pointer;color:#fff;}
 .rrec.q{background:var(--pu);}
@@ -90,8 +74,6 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 .rrec.pl{background:#45aaf2;}
 .rrec.listen{background:#f0f0f0;color:var(--dk);border:1.5px solid #ddd;}
 .rec-st{font-family:"Fredoka One",cursive;font-size:.78rem;color:#999;align-self:center;}
-
-/* MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:600;padding:12px;overflow-y:auto;}
 .modal-bg.open{display:flex;}
 .modal{background:#fff;border-radius:24px;padding:18px 15px;max-width:420px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.2);max-height:92vh;overflow-y:auto;}
@@ -110,18 +92,16 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 .rbtn.on{background:#ff4757;animation:pulseR 1s infinite;}
 .rbtn.pl{background:#45aaf2;}
 .lblu{background:#f0f0f0;border:1.5px solid #ddd;border-radius:8px;padding:6px 10px;font-family:"Fredoka One",cursive;font-size:.78rem;cursor:pointer;color:var(--dk);}
+.recst{text-align:center;font-family:"Fredoka One",cursive;font-size:.82rem;color:#999;min-height:16px;margin:4px 0;}
+.modal-btns{display:flex;gap:9px;justify-content:center;margin-top:7px;}
+.mok{background:var(--g);border:none;border-radius:28px;padding:10px 22px;font-family:"Fredoka One",cursive;font-size:.95rem;color:#fff;cursor:pointer;box-shadow:0 4px 0 #18a358;}
+.mno{background:#f0f0f0;border:none;border-radius:28px;padding:10px 22px;font-family:"Fredoka One",cursive;font-size:.95rem;color:#888;cursor:pointer;}
 .hint-rec-row{display:flex;gap:6px;align-items:center;margin-bottom:7px;background:#e8f0ff;border-radius:10px;padding:7px 9px;}
 .hint-txt{flex:1;border:1.5px solid #c8d8ff;border-radius:8px;padding:6px 9px;font-family:"Varela Round",sans-serif;font-size:.82rem;text-align:right;outline:none;background:#fff;}
 .hint-rec-btn{border:none;border-radius:8px;padding:5px 9px;font-family:"Fredoka One",cursive;font-size:.75rem;cursor:pointer;color:#fff;background:var(--pu);white-space:nowrap;}
 .hint-rec-btn.on{background:#ff4757;animation:pulseR 1s infinite;}
 .hint-play-btn{border:none;border-radius:8px;padding:5px 9px;font-family:"Fredoka One",cursive;font-size:.75rem;cursor:pointer;color:#fff;background:#45aaf2;}
-.hint-del-btn{border:none;border-radius:8px;padding:5px 9px;font-family:"Fredoka One",cursive;font-size:.75rem;cursor:pointer;background:#ffe8e8;color:var(--p);}
-.recst{text-align:center;font-family:"Fredoka One",cursive;font-size:.82rem;color:#999;min-height:16px;margin:4px 0;}
-.modal-btns{display:flex;gap:9px;justify-content:center;margin-top:7px;}
-.mok{background:var(--g);border:none;border-radius:28px;padding:10px 22px;font-family:"Fredoka One",cursive;font-size:.95rem;color:#fff;cursor:pointer;box-shadow:0 4px 0 #18a358;}
-.mno{background:#f0f0f0;border:none;border-radius:28px;padding:10px 22px;font-family:"Fredoka One",cursive;font-size:.95rem;color:#888;cursor:pointer;}
-
-/* PLAYER */
+.hint-del-btn{border:none;border-radius:8px;padding:5px 9px;font-size:.75rem;cursor:pointer;background:#ffe8e8;color:var(--p);}
 #player{background:#1a1a2e;}
 .plhdr{background:linear-gradient(135deg,#16213e,#0f3460);padding:10px 13px;display:flex;align-items:center;gap:10px;}
 .pltitle{font-family:"Fredoka One",cursive;font-size:1.2rem;color:#fff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -130,11 +110,7 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 .th-toggle{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);border-radius:50px;padding:5px 13px;font-family:"Fredoka One",cursive;font-size:.8rem;color:rgba(255,255,255,.7);cursor:pointer;}
 .th-toggle.on{background:#f6a623;border-color:#f6a623;color:#fff;}
 .plbody{flex:1;display:flex;flex-direction:column;padding:9px;gap:8px;}
-.scene-nav{display:flex;justify-content:center;gap:8px;padding:2px 0;flex-wrap:wrap;}
-.snav-dot{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:"Fredoka One",cursive;font-size:.78rem;color:rgba(255,255,255,.6);transition:all .2s;}
-.snav-dot.active{background:var(--ac);border-color:var(--ac);color:#333;}
-.snav-dot.done{background:var(--g);border-color:var(--g);color:#fff;}
-.pdots{display:flex;justify-content:center;gap:7px;padding:2px 0;}
+.pdots{display:flex;justify-content:center;gap:7px;padding:2px 0;flex-wrap:wrap;}
 .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25);transition:all .3s;}
 .dot.done{background:var(--g);}
 .dot.cur{background:var(--ac);}
@@ -143,27 +119,22 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 .ttxt{font-family:"Fredoka One",cursive;font-size:clamp(1rem,4.5vw,1.65rem);color:var(--dk);flex:1;line-height:1.25;}
 .tspk{background:var(--t);border:none;border-radius:9px;width:38px;height:38px;font-size:1.1rem;cursor:pointer;flex-shrink:0;}
 .imgwrap{flex:1;border-radius:16px;overflow:hidden;position:relative;box-shadow:0 8px 26px rgba(0,0,0,.4);min-height:180px;}
-#plimg{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;user-select:none;-webkit-user-select:none;}
+#plimg{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;user-select:none;}
 #taplayer{position:absolute;inset:0;}
 #foundlayer{position:absolute;inset:0;pointer-events:none;}
-.fzone{position:absolute;border:4px solid var(--g);background:rgba(38,222,129,.25);pointer-events:none;}
-.hzone{position:absolute;border:4px dashed var(--ac);background:rgba(255,230,109,.18);pointer-events:none;animation:hPulse .8s ease-in-out infinite;}
+.fzone{position:absolute;border:4px solid var(--g);background:rgba(38,222,129,.25);}
+.hzone{position:absolute;border:4px dashed var(--ac);background:rgba(255,230,109,.18);animation:hPulse .8s ease-in-out infinite;}
 .ripple{position:absolute;border-radius:50%;width:62px;height:62px;transform:translate(-50%,-50%) scale(0);animation:ripAnim .5s ease-out forwards;pointer-events:none;z-index:50;}
 .ripple.good{background:rgba(38,222,129,.6);}
 .ripple.bad{background:rgba(255,107,107,.5);}
-
-/* THERAPIST PANEL */
 .th-panel{display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#16213e,#0f3460);padding:12px 16px;z-index:500;border-top:3px solid var(--ac);}
 .th-panel.show{display:block;}
 .th-answer{font-family:"Fredoka One",cursive;font-size:clamp(1rem,4vw,1.4rem);color:#fff;margin-bottom:10px;text-align:center;}
 .th-hints{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;justify-content:center;}
-.hint-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50px;padding:5px 12px;font-family:"Varela Round",sans-serif;font-size:.78rem;color:rgba(255,255,255,.8);cursor:pointer;}
+.hint-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:50px;padding:5px 12px;font-size:.78rem;color:rgba(255,255,255,.8);cursor:pointer;}
 .th-btns{display:flex;gap:8px;}
 .th-play-btn{flex:1;background:var(--pu);border:none;border-radius:50px;padding:11px;font-family:"Fredoka One",cursive;font-size:1rem;color:#fff;cursor:pointer;}
 .th-cont-btn{flex:2;background:var(--g);border:none;border-radius:50px;padding:11px;font-family:"Fredoka One",cursive;font-size:1.1rem;color:#fff;cursor:pointer;box-shadow:0 4px 0 #18a358;}
-.th-cont-btn:active{transform:translateY(3px);}
-
-/* WIN */
 #win{background:linear-gradient(150deg,#f6d365,#fda085 50%,#f093fb);align-items:center;justify-content:center;padding:28px;gap:16px;text-align:center;}
 .wlogo{font-size:5rem;animation:floatY 3s ease-in-out infinite;}
 .wtitle{font-family:"Fredoka One",cursive;font-size:clamp(2.2rem,8vw,4.5rem);color:#fff;text-shadow:4px 4px 0 rgba(0,0,0,.14);}
@@ -176,11 +147,9 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 .wbtn:active{transform:translateY(4px);}
 .wbtn.again{background:var(--p);color:#fff;}
 .wbtn.back{background:#fff;color:var(--dk);}
-
 .confwrap{position:fixed;inset:0;pointer-events:none;z-index:900;overflow:hidden;}
 .cp{position:absolute;top:-18px;animation:cFall linear forwards;}
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:9px 18px;border-radius:50px;font-family:"Fredoka One",cursive;font-size:.9rem;z-index:9999;transition:opacity .3s;pointer-events:none;opacity:0;white-space:nowrap;}
-
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 @keyframes pulseR{0%,100%{box-shadow:0 0 0 0 rgba(255,71,87,.5)}50%{box-shadow:0 0 0 12px rgba(255,71,87,0)}}
 @keyframes ripAnim{to{transform:translate(-50%,-50%) scale(4);opacity:0}}
@@ -191,25 +160,19 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 </head>
 <body>
 
-<!-- HOME -->
 <div id="home" class="scr on">
   <div class="logo">🎮</div>
   <div class="htitle">שחקו<br>ולמדו</div>
   <div class="hsub">צור משחקי למידה לילדים!</div>
   <button class="bigbtn" onclick="openNewEditor()">✏️ צור משחק חדש</button>
-  <div class="home-acts">
-    <button class="hact" onclick="exportGames()">📤 ייצא</button>
-    <label class="hact" style="cursor:pointer" onclick="document.getElementById('import-input').click()">📥 ייבא</label>
-    <input type="file" id="import-input" accept=".json" onchange="importGames(event)" style="position:fixed;top:-999px;left:-999px;opacity:0">
-  </div>
   <div class="saved-sec" id="saved-sec" style="display:none">
     <div class="saved-lbl">🕹️ המשחקים שלי</div>
     <div class="games-grid" id="games-grid"></div>
   </div>
-  <div class="empty-msg" id="empty-msg">עוד אין משחקים 🚀</div>
+  <div class="empty-msg" id="empty-msg" style="display:none">עוד אין משחקים 🚀</div>
+  <div class="loading-msg" id="loading-msg">⏳ טוען משחקים...</div>
 </div>
 
-<!-- INTRO -->
 <div id="intro" class="scr">
   <img class="intro-img" id="intro-img" src="" alt="">
   <div class="intro-title" id="intro-title">שם המשחק</div>
@@ -220,24 +183,21 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
   </div>
 </div>
 
-<!-- EDITOR -->
 <div id="editor" class="scr">
   <div class="topbar">
     <button class="tbtn" onclick="goHome()">🏠</button>
     <input class="topbar-name" type="text" id="gname" value="המשחק שלי">
     <button class="tbtn go" onclick="doSavePlay()">▶ שחק</button>
-    <button class="tbtn sv" onclick="doSave()">💾</button>
+    <button class="tbtn sv" id="save-btn" onclick="doSave()">💾 שמור</button>
   </div>
   <div class="ebody">
-
-    <!-- INTRO/WIN CARDS -->
     <div class="card">
       <div class="card-title">🎬 מסך פתיחה</div>
       <input class="zinput" type="text" id="intro-text" placeholder="כותרת שתופיע בפתיחה...">
       <div class="rec-row">
         <button class="rrec listen" onclick="speak(document.getElementById('intro-text').value)">🔊</button>
         <button class="rrec q" id="rec-intro-btn" onclick="toggleRec('intro')">🎤 הקלט</button>
-        <button class="rrec pl" id="play-intro-btn" style="display:none" onclick="playUrl(edIntroAudio)">▶</button>
+        <button class="rrec pl" id="play-intro-btn" style="display:none" onclick="playAudio('intro')">▶</button>
         <span class="rec-st" id="rec-intro-st"></span>
       </div>
     </div>
@@ -247,24 +207,20 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
       <div class="rec-row">
         <button class="rrec listen" onclick="speak(document.getElementById('win-text').value)">🔊</button>
         <button class="rrec q" id="rec-win-btn" onclick="toggleRec('win')">🎤 הקלט</button>
-        <button class="rrec pl" id="play-win-btn" style="display:none" onclick="playUrl(edWinAudio)">▶</button>
+        <button class="rrec pl" id="play-win-btn" style="display:none" onclick="playAudio('win')">▶</button>
         <span class="rec-st" id="rec-win-st"></span>
       </div>
     </div>
-
-    <!-- IMAGE UPLOAD -->
     <div id="upload-card">
       <label style="cursor:pointer;display:block">
         <div style="background:#fff;border:3px dashed #c8d8ff;border-radius:20px;padding:40px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px">
           <div style="font-size:3rem">🖼️</div>
-          <div style="font-family:Fredoka One,cursive;font-size:1.4rem;color:var(--t)">לחץ להעלאת תמונה</div>
+          <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--t)">לחץ להעלאת תמונה</div>
           <div style="color:#aaa;font-size:.85rem">מגלריה · JPG / PNG</div>
         </div>
         <input type="file" id="img-file" accept="image/*" onchange="onImgUpload(event)" style="display:none">
       </label>
     </div>
-
-    <!-- DRAW TOOLS (hidden until image loaded) -->
     <div id="draw-card" class="card" style="display:none">
       <div class="card-title">🖊️ סמן אזורים על התמונה</div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -278,18 +234,14 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
       <canvas id="ecvs"></canvas>
       <div class="cvstip">👆 גרור על התמונה לסימון אזור</div>
     </div>
-
-    <!-- ZONES LIST -->
     <div id="zones-card" class="card" style="display:none">
       <div class="card-title">📋 שאלות <span id="zcnt" style="background:var(--pu);color:#fff;border-radius:30px;padding:1px 9px;font-size:.76rem">0</span></div>
       <div id="zlist"></div>
       <div id="zempty" style="text-align:center;color:#ccc;padding:15px;font-size:.85rem">גרור על התמונה לסימון</div>
     </div>
-
   </div>
 </div>
 
-<!-- PLAYER -->
 <div id="player" class="scr">
   <div class="plhdr">
     <button class="tbtn" onclick="exitPlayer()" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff;padding:6px 10px">✕</button>
@@ -301,7 +253,6 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
     <span style="color:rgba(255,255,255,.4);font-size:.72rem">כשדלוק – את שולטת בקצב</span>
   </div>
   <div class="plbody">
-    <div class="scene-nav" id="scene-nav" style="display:none"></div>
     <div class="pdots" id="pdots"></div>
     <div class="taskcard" id="taskcard">
       <div class="temoji" id="temoji" onclick="speakQ()">🔍</div>
@@ -316,7 +267,6 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
   </div>
 </div>
 
-<!-- WIN -->
 <div id="win" class="scr">
   <div class="wlogo">🏆</div>
   <div class="wtitle">כל הכבוד!<br>ניצחת! 🎉</div>
@@ -328,7 +278,6 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
   </div>
 </div>
 
-<!-- THERAPIST PANEL -->
 <div class="th-panel" id="th-panel">
   <div class="th-answer" id="th-answer">מצאת! 🎉</div>
   <div class="th-hints" id="th-hints"></div>
@@ -338,7 +287,6 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
   </div>
 </div>
 
-<!-- ZONE MODAL -->
 <div class="modal-bg" id="vmodal">
   <div class="modal">
     <div class="modal-h">✏️ ערוך שאלה <span id="vmnum">1</span></div>
@@ -348,10 +296,10 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
       <div class="rrow">
         <button class="lblu" onclick="speak(document.getElementById('tts-q').value)">🔊</button>
         <button class="rbtn q" id="rec-q-btn" onclick="toggleRec('q')">🎤 הקלט</button>
-        <button class="rbtn pl" id="play-q-btn" style="display:none" onclick="playUrl(modalQUrl)">▶</button>
-        <button class="rbtn" id="del-q-btn" style="display:none;background:#ff6b6b" onclick="delRecQ()">🗑️</button>
+        <button class="rbtn pl" id="play-q-btn" style="display:none" onclick="playAudio('q')">▶</button>
+        <button class="rbtn" id="del-q-btn" style="display:none;background:#ff6b6b" onclick="delRec('q')">🗑️</button>
       </div>
-      <div id="q-ind" style="display:none;font-size:.75rem;color:var(--g);margin-top:4px;font-family:Fredoka One,cursive">✅ יש הקלטה</div>
+      <div id="q-ind" style="display:none;font-size:.75rem;color:var(--g);margin-top:4px;font-family:'Fredoka One',cursive">✅ יש הקלטה</div>
     </div>
     <div class="sbox a">
       <div class="slbl a">✅ תשובה נכונה</div>
@@ -359,19 +307,18 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
       <div class="rrow">
         <button class="lblu" onclick="speak(document.getElementById('tts-a').value)">🔊</button>
         <button class="rbtn a" id="rec-a-btn" onclick="toggleRec('a')">🎤 הקלט</button>
-        <button class="rbtn pl" id="play-a-btn" style="display:none" onclick="playUrl(modalAUrl)">▶</button>
-        <button class="rbtn" id="del-a-btn" style="display:none;background:#ff6b6b" onclick="delRecA()">🗑️</button>
+        <button class="rbtn pl" id="play-a-btn" style="display:none" onclick="playAudio('a')">▶</button>
+        <button class="rbtn" id="del-a-btn" style="display:none;background:#ff6b6b" onclick="delRec('a')">🗑️</button>
       </div>
-      <div id="a-ind" style="display:none;font-size:.75rem;color:var(--g);margin-top:4px;font-family:Fredoka One,cursive">✅ יש הקלטה</div>
+      <div id="a-ind" style="display:none;font-size:.75rem;color:var(--g);margin-top:4px;font-family:'Fredoka One',cursive">✅ יש הקלטה</div>
     </div>
     <div class="sbox" style="background:#fff8f0">
       <div class="slbl" style="color:#888;font-size:.82rem">😊 אימוג׳י</div>
       <input class="sin" type="text" id="modal-emoji" placeholder="🔍" maxlength="4">
     </div>
     <div class="sbox" style="background:#f0f8ff">
-      <div class="slbl" style="color:#3a7bd5;font-size:.85rem">💬 שאלות שיח (מצב מטפל)</div>
-      <div style="font-size:.72rem;color:#aaa;margin-bottom:8px">הקליטי כל שאלה בקולך – לא רובוט!</div>
-      <div id="hints-rec-list"></div>
+      <div class="slbl" style="color:#3a7bd5;font-size:.85rem">💬 שאלות שיח – הקליטי בקולך</div>
+      <div id="hints-list"></div>
       <button class="lblu" style="width:100%;margin-top:6px;text-align:center" onclick="addHintRow()">➕ הוסף שאלת שיח</button>
     </div>
     <div class="recst" id="recst"></div>
@@ -387,18 +334,65 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 
 <script>
 const COLORS=['#A55EEA','#FF6B6B','#4ECDC4','#FF8E53','#45aaf2','#26de81','#fd9644','#fc5c65'];
+const SB_URL='https://vwrcmzoxfrgrftmfhvan.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3cmNtem94ZnJncmZ0bWZodmFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNDE3NDMsImV4cCI6MjA1NTcxNzc0M30.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3cmNtem94ZnJncmZ0bWZodmFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNDE3NDMsImV4cCI6MjA1NTcxNzc0M30';
+const SB_TABLE='picture find game';
 
-// ═══════════════════════════════════════
-// AUDIO
-// ═══════════════════════════════════════
+// ═══ SUPABASE ═══
+async function sbReq(method,body,filter=''){
+  const r=await fetch(SB_URL+'/rest/v1/'+encodeURIComponent(SB_TABLE)+filter,{
+    method,
+    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':method==='POST'?'return=representation':''},
+    body:body?JSON.stringify(body):null
+  });
+  if(!r.ok){const t=await r.text();throw new Error(t);}
+  return r.status===204?null:r.json();
+}
+async function dbLoad(){
+  try{
+    const rows=await sbReq('GET',null,'?select=id,name,share_id,data&order=created_at.desc');
+    savedGames=rows.map(r=>({...r.data,_dbid:r.id,_share:r.share_id,name:r.name}));
+  }catch(e){console.error('load:',e);savedGames=[];}
+  document.getElementById('loading-msg').style.display='none';
+  renderHome();
+}
+async function dbSave(game){
+  const shareId=game._share||Math.random().toString(36).slice(2,10);
+  const {_dbid,_share,...data}=game;
+  const payload={name:game.name,share_id:shareId,data};
+  try{
+    if(_dbid){
+      await sbReq('PATCH',payload,'?id=eq.'+_dbid);
+      return{...game,_share:shareId};
+    }else{
+      const rows=await sbReq('POST',payload);
+      return{...game,_dbid:rows[0].id,_share:shareId};
+    }
+  }catch(e){toast('❌ שגיאת שמירה: '+e.message);return null;}
+}
+async function dbDelete(dbid){
+  try{await sbReq('DELETE',null,'?id=eq.'+dbid);}catch(e){console.error(e);}
+}
+
+// ═══ STATE ═══
+let savedGames=[];
+let edGame=null,edZones=[],edImgSrc='',edImgEl=null;
+let edIntroAudio=null,edWinAudio=null;
+let dMode='circle',drawing=false,dStart={x:0,y:0};
+let cvs=null,ctx=null;
+let modalIdx=-1,modalQUrl=null,modalAUrl=null;
+let recKey=null,recOn=false,recSec=0,recTimer=null,mediaRec=null,recChunks=[],recStream=null;
+let curGame=null,curTask=0,plScore=0,wrongPer=0,hintTimer=null,tapping=false;
+let thMode=false,thPending=null;
+let hintRecRow=null;
 let AC=null;
+
+// ═══ AUDIO ENGINE ═══
 function wA(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}
 function playOk(){try{wA();[523,659,784,1047].forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='sine';o.frequency.value=f;const t=AC.currentTime+i*.13;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.38);o.start(t);o.stop(t+.38);});}catch(e){}}
 function playFail(){try{wA();const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='sawtooth';o.frequency.setValueAtTime(280,AC.currentTime);o.frequency.linearRampToValueAtTime(120,AC.currentTime+.35);g.gain.setValueAtTime(.28,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.38);o.start(AC.currentTime);o.stop(AC.currentTime+.38);}catch(e){}}
 
-// ═══════════════════════════════════════
-// TTS
-// ═══════════════════════════════════════
+// ═══ TTS ═══
 let chosenVoice=null;
 function heVoices(){return(window.speechSynthesis?.getVoices()||[]).filter(v=>v.lang?.toLowerCase().startsWith('he'));}
 function speak(txt,rate,pitch,cb){
@@ -415,37 +409,59 @@ function spOp(url,txt,cb){if(url)playUrl(url,cb);else if(txt?.trim())speak(txt,.
 window.speechSynthesis?.getVoices();
 if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
 
-// ═══════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════
-let savedGames=[];
-let edGame=null; // game being edited (full object)
-let edZones=[];  // current zones being edited
-let edImgSrc='';
-let edImgEl=null;
-let edIntroAudio=null,edWinAudio=null;
-let dMode='circle',drawing=false,dStart={x:0,y:0};
-let cvs=null,ctx=null;
-let modalIdx=-1,modalQUrl=null,modalAUrl=null;
-let recKey=null,recOn=false,recSec=0,recTimer=null,mediaRec=null,recChunks=[],recStream=null;
-let curGame=null,curTask=0,plScore=0,wrongPer=0,hintTimer=null,tapping=false;
-let thMode=false,thPending=null;
-
-// ═══════════════════════════════════════
-// SCREENS
-// ═══════════════════════════════════════
+// ═══ SCREENS ═══
 function showScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
 function goHome(){
   window.speechSynthesis?.cancel();
   document.getElementById('th-panel').classList.remove('show');
   thPending=null;
-  loadGames();showScr('home');
+  renderHome();
+  showScr('home');
 }
 function exitPlayer(){goHome();}
 
-// ═══════════════════════════════════════
-// EDITOR – clean and simple
-// ═══════════════════════════════════════
+// ═══ HOME ═══
+function renderHome(){
+  const grid=document.getElementById('games-grid');
+  const sec=document.getElementById('saved-sec');
+  const empty=document.getElementById('empty-msg');
+  document.getElementById('loading-msg').style.display='none';
+  if(!savedGames.length){sec.style.display='none';empty.style.display='block';return;}
+  sec.style.display='block';empty.style.display='none';
+  grid.innerHTML='';
+  savedGames.forEach(g=>{
+    const c=document.createElement('div');c.className='gcard';
+    const imgHtml=g.imageSrc?`<img src="${g.imageSrc}" loading="lazy">`:'<div style="aspect-ratio:16/9;background:#e8f0ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:5px">🎮</div>';
+    c.innerHTML=imgHtml+`<div class="gcard-name">${esc(g.name||'')}</div>
+    <div class="gcard-btns">
+      <button class="gcbtn play" onclick="startFromHome('${g._dbid}')">▶ שחק</button>
+      <button class="gcbtn edit" onclick="editFromHome('${g._dbid}')">✏️ ערוך</button>
+      <button class="gcbtn share" onclick="shareFromHome('${g._dbid}')">🔗 שתף</button>
+      <button class="gcbtn del" onclick="delFromHome('${g._dbid}')">🗑️</button>
+    </div>`;
+    grid.appendChild(c);
+  });
+}
+function getGame(dbid){return savedGames.find(g=>g._dbid===dbid);}
+function startFromHome(id){const g=getGame(id);if(g){wA();showIntro(g);}}
+function editFromHome(id){const g=getGame(id);if(g)openEditGame(g);}
+function shareFromHome(id){
+  const g=getGame(id);if(!g)return;
+  if(!g._share){toast('שמרי קודם את המשחק');return;}
+  const link=window.location.origin+window.location.pathname+'?play='+g._share;
+  if(navigator.clipboard){navigator.clipboard.writeText(link).then(()=>toast('🔗 לינק הועתק! שלחי להורים 📱')).catch(()=>prompt('העתיקי:',link));}
+  else prompt('העתיקי:',link);
+}
+async function delFromHome(id){
+  if(!confirm('למחוק?'))return;
+  const g=getGame(id);
+  if(g?._dbid)await dbDelete(g._dbid);
+  savedGames=savedGames.filter(x=>x._dbid!==id);
+  renderHome();
+}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+// ═══ EDITOR ═══
 function openNewEditor(){
   wA();
   edGame=null;edZones=[];edImgSrc='';edImgEl=null;edIntroAudio=null;edWinAudio=null;
@@ -462,284 +478,204 @@ function openNewEditor(){
   renderZones();
   showScr('editor');
 }
-
 function openEditGame(game){
   wA();
   edGame=game;
-  // Load zones – support both old format (zones) and new (scenes)
-  if(game.scenes&&game.scenes.length){
-    edZones=game.scenes[0].zones.map(z=>({...z}));
-    edImgSrc=game.scenes[0].imageSrc;
-  } else {
-    edZones=(game.zones||[]).map(z=>({...z}));
-    edImgSrc=game.imageSrc||'';
-  }
+  edZones=(game.zones||[]).map(z=>({...z}));
+  edImgSrc=game.imageSrc||'';
   edIntroAudio=game.introAudioUrl||null;
   edWinAudio=game.winAudioUrl||null;
-
   document.getElementById('gname').value=game.name||'';
   document.getElementById('intro-text').value=game.introText||'';
   document.getElementById('win-text').value=game.winText||'';
   document.getElementById('play-intro-btn').style.display=edIntroAudio?'inline-block':'none';
   document.getElementById('play-win-btn').style.display=edWinAudio?'inline-block':'none';
-
   document.getElementById('upload-card').style.display='none';
   document.getElementById('draw-card').style.display='block';
   document.getElementById('canvas-card').style.display='block';
   document.getElementById('zones-card').style.display='block';
-
   renderZones();
-
-  // Load image into canvas
   const img=new Image();
-  img.onload=()=>{
-    edImgEl=img;
-    initCanvas();
-    drawCanvas();
-  };
+  img.onload=()=>{edImgEl=img;initCanvas();drawCanvas();};
   img.src=edImgSrc;
   if(img.complete&&img.naturalWidth){edImgEl=img;setTimeout(()=>{initCanvas();drawCanvas();},50);}
-
   showScr('editor');
 }
+function playAudio(key){
+  if(key==='intro')playUrl(edIntroAudio);
+  else if(key==='win')playUrl(edWinAudio);
+  else if(key==='q')playUrl(modalQUrl);
+  else if(key==='a')playUrl(modalAUrl);
+}
 
-// ═══════════════════════════════════════
-// CANVAS
-// ═══════════════════════════════════════
+// ═══ CANVAS ═══
 function initCanvas(){
   const card=document.getElementById('canvas-card');
-  // Remove old canvas if exists
-  const old=document.getElementById('ecvs');
-  if(old) old.remove();
-  cvs=document.createElement('canvas');
-  cvs.id='ecvs';
+  const old=document.getElementById('ecvs');if(old)old.remove();
+  cvs=document.createElement('canvas');cvs.id='ecvs';
   cvs.style.cssText='display:block;width:100%;touch-action:none;user-select:none;-webkit-user-select:none;';
-  const tip=card.querySelector('.cvstip');
-  card.insertBefore(cvs,tip);
+  const tip=card.querySelector('.cvstip');card.insertBefore(cvs,tip);
   ctx=cvs.getContext('2d');
   const maxW=card.clientWidth||(window.innerWidth-24);
-  cvs.width=Math.round(maxW);
-  cvs.height=Math.round(maxW*edImgEl.height/edImgEl.width);
-  setupCanvasEvents();
-}
-function drawCanvas(preview){
-  if(!edImgEl||!ctx)return;
-  ctx.clearRect(0,0,cvs.width,cvs.height);
-  ctx.drawImage(edImgEl,0,0,cvs.width,cvs.height);
-  edZones.forEach((z,i)=>paintZone(z,i,false));
-  if(preview)paintZone(preview,edZones.length,true);
-}
-function paintZone(z,i,isP){
-  const x=z.x*cvs.width,y=z.y*cvs.height,w=z.w*cvs.width,h=z.h*cvs.height;
-  const col=COLORS[i%COLORS.length];
-  const [r,g,b]=[parseInt(col.slice(1,3),16),parseInt(col.slice(3,5),16),parseInt(col.slice(5,7),16)];
-  ctx.save();ctx.strokeStyle=col;ctx.lineWidth=3;ctx.fillStyle=`rgba(${r},${g},${b},.22)`;
-  if(z.shape==='circle'){ctx.beginPath();ctx.ellipse(x+w/2,y+h/2,w/2,h/2,0,0,Math.PI*2);ctx.fill();ctx.stroke();}
-  else{ctx.fillRect(x,y,w,h);ctx.strokeRect(x,y,w,h);}
-  if(!isP){
-    ctx.fillStyle=col;ctx.font='bold 13px sans-serif';ctx.textAlign='center';
-    ctx.fillText(`${i+1}${z.label?' · '+z.label.slice(0,12):''}`,x+w/2,Math.max(y-5,13));
-    if(z.audioQUrl)ctx.fillText('🎤',x+w-8,y+17);
-  }
-  ctx.restore();
-}
-function cPos(e){
-  const r=cvs.getBoundingClientRect();
-  return{x:(e.clientX-r.left)*(cvs.width/r.width),y:(e.clientY-r.top)*(cvs.height/r.height)};
-}
-function setupCanvasEvents(){
-  cvs.addEventListener('pointerdown',e=>{
-    e.preventDefault();cvs.setPointerCapture(e.pointerId);
-    drawing=true;dStart=cPos(e);wA();
-  },{passive:false});
-  cvs.addEventListener('pointermove',e=>{
-    if(!drawing)return;e.preventDefault();
-    const c=cPos(e);
-    drawCanvas({x:Math.min(dStart.x,c.x)/cvs.width,y:Math.min(dStart.y,c.y)/cvs.height,w:Math.abs(c.x-dStart.x)/cvs.width,h:Math.abs(c.y-dStart.y)/cvs.height,shape:dMode});
-  },{passive:false});
+  cvs.width=Math.round(maxW);cvs.height=Math.round(maxW*edImgEl.height/edImgEl.width);
+  cvs.addEventListener('pointerdown',e=>{e.preventDefault();cvs.setPointerCapture(e.pointerId);drawing=true;dStart=cPos(e);wA();},{passive:false});
+  cvs.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const c=cPos(e);drawCanvas({x:Math.min(dStart.x,c.x)/cvs.width,y:Math.min(dStart.y,c.y)/cvs.height,w:Math.abs(c.x-dStart.x)/cvs.width,h:Math.abs(c.y-dStart.y)/cvs.height,shape:dMode});},{passive:false});
   cvs.addEventListener('pointerup',e=>{
     if(!drawing)return;drawing=false;
     const c=cPos(e),x=Math.min(dStart.x,c.x),y=Math.min(dStart.y,c.y),w=Math.abs(c.x-dStart.x),h=Math.abs(c.y-dStart.y);
     if(w<12||h<12){drawCanvas();return;}
-    edZones.push({x:x/cvs.width,y:y/cvs.height,w:w/cvs.width,h:h/cvs.height,shape:dMode,label:'',emoji:'🔍',ttsText:'',ttsAnswer:'',audioQUrl:null,audioAUrl:null,discussHints:[]});
+    edZones.push({x:x/cvs.width,y:y/cvs.height,w:w/cvs.width,h:h/cvs.height,shape:dMode,label:'',emoji:'🔍',ttsText:'',ttsAnswer:'',audioQUrl:null,audioAUrl:null,discussHints:[],discussAudios:[]});
     drawCanvas();renderZones();openModal(edZones.length-1);
   });
   cvs.addEventListener('pointercancel',()=>{drawing=false;drawCanvas();});
 }
-function setMode(m){
-  dMode=m;
-  document.getElementById('btn-c').classList.toggle('act',m==='circle');
-  document.getElementById('btn-r').classList.toggle('act',m==='rect');
+function drawCanvas(preview){
+  if(!edImgEl||!ctx)return;
+  ctx.clearRect(0,0,cvs.width,cvs.height);ctx.drawImage(edImgEl,0,0,cvs.width,cvs.height);
+  edZones.forEach((z,i)=>paintZ(z,i,false));
+  if(preview)paintZ(preview,edZones.length,true);
 }
+function paintZ(z,i,isP){
+  const x=z.x*cvs.width,y=z.y*cvs.height,w=z.w*cvs.width,h=z.h*cvs.height,col=COLORS[i%COLORS.length];
+  const [r,g,b]=[parseInt(col.slice(1,3),16),parseInt(col.slice(3,5),16),parseInt(col.slice(5,7),16)];
+  ctx.save();ctx.strokeStyle=col;ctx.lineWidth=3;ctx.fillStyle=`rgba(${r},${g},${b},.22)`;
+  if(z.shape==='circle'){ctx.beginPath();ctx.ellipse(x+w/2,y+h/2,w/2,h/2,0,0,Math.PI*2);ctx.fill();ctx.stroke();}
+  else{ctx.fillRect(x,y,w,h);ctx.strokeRect(x,y,w,h);}
+  if(!isP){ctx.fillStyle=col;ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText(`${i+1}${z.label?' · '+z.label.slice(0,12):''}`,x+w/2,Math.max(y-5,13));if(z.audioQUrl)ctx.fillText('🎤',x+w-8,y+17);}
+  ctx.restore();
+}
+function cPos(e){const r=cvs.getBoundingClientRect();return{x:(e.clientX-r.left)*(cvs.width/r.width),y:(e.clientY-r.top)*(cvs.height/r.height)};}
+function setMode(m){dMode=m;document.getElementById('btn-c').classList.toggle('act',m==='circle');document.getElementById('btn-r').classList.toggle('act',m==='rect');}
 function undoZone(){if(edZones.length){edZones.pop();drawCanvas();renderZones();}}
 function clearZones(){if(!edZones.length)return;if(confirm('למחוק הכל?')){edZones=[];drawCanvas();renderZones();}}
-
 function onImgUpload(e){
   const file=e.target.files?.[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=ev=>{
     edImgSrc=ev.target.result;
     const img=new Image();
-    img.onload=()=>{
-      edImgEl=img;
-      document.getElementById('upload-card').style.display='none';
-      document.getElementById('draw-card').style.display='block';
-      document.getElementById('canvas-card').style.display='block';
-      document.getElementById('zones-card').style.display='block';
-      edZones=[];renderZones();
-      initCanvas();drawCanvas();
-    };
+    img.onload=()=>{edImgEl=img;document.getElementById('upload-card').style.display='none';document.getElementById('draw-card').style.display='block';document.getElementById('canvas-card').style.display='block';document.getElementById('zones-card').style.display='block';edZones=[];renderZones();initCanvas();drawCanvas();};
     img.src=edImgSrc;
   };
   reader.readAsDataURL(file);
 }
 
-// ═══════════════════════════════════════
-// ZONES LIST
-// ═══════════════════════════════════════
-
-function setupDrag(row, idx){
-  const handle = row.querySelector('.drag-handle');
-  let dragSrc = idx;
-  const doEnd = (ex, ey) => {
-    row.classList.remove('dragging');
-    const el = document.elementFromPoint(ex, ey);
-    const target = el?.closest('.zone-row');
-    document.querySelectorAll('.zone-row').forEach(r => r.classList.remove('drag-over'));
-    if(target && target !== row){
-      const dest = parseInt(target.dataset.idx);
-      if(!isNaN(dest) && dest !== dragSrc){
-        const moved = edZones.splice(dragSrc, 1)[0];
-        edZones.splice(dest, 0, moved);
-        drawCanvas(); renderZones();
-      }
-    }
-  };
-  // Mouse
-  handle.addEventListener('mousedown', e => {
-    e.preventDefault(); dragSrc = idx; row.classList.add('dragging');
-    const mv = ev => { const el = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.zone-row'); document.querySelectorAll('.zone-row').forEach(r=>r.classList.remove('drag-over')); if(el&&el!==row)el.classList.add('drag-over'); };
-    const up = ev => { document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); doEnd(ev.clientX,ev.clientY); };
-    document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
-  });
-  // Touch
-  handle.addEventListener('touchstart', e => {
-    e.preventDefault(); dragSrc = idx; row.classList.add('dragging');
-    const mv = ev => { ev.preventDefault(); const t=ev.touches[0]; const el=document.elementFromPoint(t.clientX,t.clientY)?.closest('.zone-row'); document.querySelectorAll('.zone-row').forEach(r=>r.classList.remove('drag-over')); if(el&&el!==row)el.classList.add('drag-over'); };
-    const up = ev => { handle.removeEventListener('touchmove',mv); handle.removeEventListener('touchend',up); const t=ev.changedTouches[0]; doEnd(t.clientX,t.clientY); };
-    handle.addEventListener('touchmove', mv, {passive:false});
-    handle.addEventListener('touchend', up);
-  }, {passive:false});
-}
-
+// ═══ ZONES LIST ═══
 function renderZones(){
-  const list=document.getElementById('zlist');
-  const empty=document.getElementById('zempty');
-  const cnt=document.getElementById('zcnt');
+  const list=document.getElementById('zlist'),empty=document.getElementById('zempty'),cnt=document.getElementById('zcnt');
   if(cnt)cnt.textContent=edZones.length;
   if(!edZones.length){list.innerHTML='';if(empty)empty.style.display='block';return;}
   if(empty)empty.style.display='none';
   list.innerHTML='';
   edZones.forEach((z,i)=>{
-    const row=document.createElement('div');row.className='zone-row';
-    row.dataset.idx=i;
-    row.innerHTML=`
-      <div class="zone-top">
-        <div class="drag-handle" touch-action="none">⠿</div>
-        <div class="zone-num" style="background:${COLORS[i%COLORS.length]}">${i+1}</div>
-        <div class="zone-fields">
-          <input class="zinput" type="text" placeholder="✏️ שאלה" value="${esc(z.label||'')}"
-            oninput="edZones[${i}].label=this.value;edZones[${i}].ttsText=this.value;drawCanvas()">
-          <input class="zinput ans" type="text" placeholder="✅ תשובה נכונה" value="${esc(z.ttsAnswer||'')}"
-            oninput="edZones[${i}].ttsAnswer=this.value">
-        </div>
-        <div class="zone-acts">
-          <button class="zact ${z.audioQUrl?'haudio':''}" onclick="openModal(${i})">🎤</button>
-          <button class="zact" onclick="edZones.splice(${i},1);drawCanvas();renderZones()">🗑️</button>
-        </div>
-      </div>`;
-    setupDrag(row, i);
+    const row=document.createElement('div');row.className='zone-row';row.dataset.idx=i;
+    row.innerHTML=`<div class="zone-top">
+      <div class="drag-handle" touch-action="none">⠿</div>
+      <div class="zone-num" style="background:${COLORS[i%COLORS.length]}">${i+1}</div>
+      <div class="zone-fields">
+        <input class="zinput" type="text" placeholder="✏️ שאלה" value="${esc(z.label||'')}" oninput="edZones[${i}].label=this.value;edZones[${i}].ttsText=this.value;drawCanvas()">
+        <input class="zinput ans" type="text" placeholder="✅ תשובה נכונה" value="${esc(z.ttsAnswer||'')}" oninput="edZones[${i}].ttsAnswer=this.value">
+      </div>
+      <div class="zone-acts">
+        <button class="zact ${z.audioQUrl?'haudio':''}" onclick="openModal(${i})">🎤</button>
+        <button class="zact" onclick="edZones.splice(${i},1);drawCanvas();renderZones()">🗑️</button>
+      </div></div>`;
+    setupDrag(row,i);
     list.appendChild(row);
   });
 }
-function esc(s){return(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 
-// ═══════════════════════════════════════
-// MODAL
-// ═══════════════════════════════════════
+// ═══ DRAG & DROP ═══
+function setupDrag(row,idx){
+  const handle=row.querySelector('.drag-handle');
+  const doEnd=(ex,ey)=>{
+    row.classList.remove('dragging');
+    const el=document.elementFromPoint(ex,ey)?.closest('.zone-row');
+    document.querySelectorAll('.zone-row').forEach(r=>r.classList.remove('drag-over'));
+    if(el&&el!==row){const dest=parseInt(el.dataset.idx);if(!isNaN(dest)&&dest!==idx){const m=edZones.splice(idx,1)[0];edZones.splice(dest,0,m);drawCanvas();renderZones();}}
+  };
+  handle.addEventListener('mousedown',e=>{
+    e.preventDefault();row.classList.add('dragging');
+    const mv=ev=>{const el=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('.zone-row');document.querySelectorAll('.zone-row').forEach(r=>r.classList.remove('drag-over'));if(el&&el!==row)el.classList.add('drag-over');};
+    const up=ev=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);doEnd(ev.clientX,ev.clientY);};
+    document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);
+  });
+  handle.addEventListener('touchstart',e=>{
+    e.preventDefault();row.classList.add('dragging');
+    const mv=ev=>{ev.preventDefault();const t=ev.touches[0];const el=document.elementFromPoint(t.clientX,t.clientY)?.closest('.zone-row');document.querySelectorAll('.zone-row').forEach(r=>r.classList.remove('drag-over'));if(el&&el!==row)el.classList.add('drag-over');};
+    const up=ev=>{handle.removeEventListener('touchmove',mv);handle.removeEventListener('touchend',up);const t=ev.changedTouches[0];doEnd(t.clientX,t.clientY);};
+    handle.addEventListener('touchmove',mv,{passive:false});handle.addEventListener('touchend',up);
+  },{passive:false});
+}
+
+// ═══ MODAL ═══
 function openModal(i){
-  modalIdx=i;
-  const z=edZones[i];
-  modalQUrl=z.audioQUrl||null;
-  modalAUrl=z.audioAUrl||null;
+  modalIdx=i;const z=edZones[i];
+  modalQUrl=z.audioQUrl||null;modalAUrl=z.audioAUrl||null;
   document.getElementById('vmnum').textContent=i+1;
   document.getElementById('tts-q').value=z.ttsText||z.label||'';
   document.getElementById('tts-a').value=z.ttsAnswer||'';
   document.getElementById('modal-emoji').value=z.emoji||'🔍';
-  document.getElementById('modal-hints').value=(z.discussHints||[]).join('\n');
   document.getElementById('recst').textContent='';
-  // Q recording state
-  const hasQ=!!modalQUrl;
+  const hasQ=!!modalQUrl,hasA=!!modalAUrl;
   document.getElementById('play-q-btn').style.display=hasQ?'inline-block':'none';
   document.getElementById('del-q-btn').style.display=hasQ?'inline-block':'none';
   document.getElementById('q-ind').style.display=hasQ?'block':'none';
-  document.getElementById('rec-q-btn').textContent='🎤 הקלט';
-  document.getElementById('rec-q-btn').classList.remove('on');
-  // A recording state
-  const hasA=!!modalAUrl;
   document.getElementById('play-a-btn').style.display=hasA?'inline-block':'none';
   document.getElementById('del-a-btn').style.display=hasA?'inline-block':'none';
   document.getElementById('a-ind').style.display=hasA?'block':'none';
-  document.getElementById('rec-a-btn').textContent='🎤 הקלט';
-  document.getElementById('rec-a-btn').classList.remove('on');
-  renderHintRows();
+  ['rec-q-btn','rec-a-btn'].forEach(id=>{const b=document.getElementById(id);if(b){b.classList.remove('on');b.textContent='🎤 הקלט';}});
+  renderHintRows(z);
   document.getElementById('vmodal').classList.add('open');
 }
 function closeModal(){stopRec();document.getElementById('vmodal').classList.remove('open');}
-function delRecQ(){modalQUrl=null;document.getElementById('play-q-btn').style.display='none';document.getElementById('del-q-btn').style.display='none';document.getElementById('q-ind').style.display='none';}
-function delRecA(){modalAUrl=null;document.getElementById('play-a-btn').style.display='none';document.getElementById('del-a-btn').style.display='none';document.getElementById('a-ind').style.display='none';}
-
-
-function renderHintRows(){
-  const list=document.getElementById('hints-rec-list');
-  if(!list)return;
-  list.innerHTML='';
+function delRec(key){
+  if(key==='q'){modalQUrl=null;document.getElementById('play-q-btn').style.display='none';document.getElementById('del-q-btn').style.display='none';document.getElementById('q-ind').style.display='none';}
+  if(key==='a'){modalAUrl=null;document.getElementById('play-a-btn').style.display='none';document.getElementById('del-a-btn').style.display='none';document.getElementById('a-ind').style.display='none';}
+}
+function saveModal(){
+  if(modalIdx<0)return;stopRec();
   const z=edZones[modalIdx];
-  const hints=z?.discussHints||[];
-  const audios=z?.discussAudios||[];
-  hints.forEach((h,i)=>addHintRowWith(h, audios[i]||null));
-  if(!hints.length) addHintRowWith('','');
+  z.ttsText=document.getElementById('tts-q').value.trim();
+  z.ttsAnswer=document.getElementById('tts-a').value.trim();
+  z.emoji=document.getElementById('modal-emoji').value.trim()||'🔍';
+  if(!z.label&&z.ttsText)z.label=z.ttsText;
+  z.audioQUrl=modalQUrl||null;
+  z.audioAUrl=modalAUrl||null;
+  const hintRows=document.querySelectorAll('.hint-rec-row');
+  z.discussHints=[];z.discussAudios=[];
+  hintRows.forEach(row=>{
+    const txt=row.querySelector('.hint-txt')?.value?.trim()||'';
+    const audio=row.dataset.audio||null;
+    if(txt||audio){z.discussHints.push(txt);z.discussAudios.push(audio);}
+  });
+  renderZones();drawCanvas();closeModal();
 }
 
-function addHintRow(){
-  addHintRowWith('', null);
+// ═══ HINT ROWS ═══
+function renderHintRows(z){
+  const list=document.getElementById('hints-list');list.innerHTML='';
+  const hints=z?.discussHints||[];const audios=z?.discussAudios||[];
+  if(!hints.length){addHintRowWith('',null);}
+  else hints.forEach((h,i)=>addHintRowWith(h,audios[i]||null));
 }
-
-function addHintRowWith(txt, audioUrl){
-  const list=document.getElementById('hints-rec-list');
-  if(!list)return;
-  const row=document.createElement('div');
-  row.className='hint-rec-row';
-  row.dataset.audio=audioUrl||'';
-  row.innerHTML=`
-    <input class="hint-txt" type="text" placeholder="מה עוד אתה רואה?" value="${(txt||'').replace(/"/g,'&quot;')}">
+function addHintRow(){addHintRowWith('',null);}
+function addHintRowWith(txt,audioUrl){
+  const list=document.getElementById('hints-list');if(!list)return;
+  const row=document.createElement('div');row.className='hint-rec-row';row.dataset.audio=audioUrl||'';
+  row.innerHTML=`<input class="hint-txt" type="text" placeholder="שאלת שיח..." value="${esc(txt||'')}">
     <button class="hint-rec-btn" onclick="toggleHintRec(this)">🎤</button>
-    ${audioUrl?`<button class="hint-play-btn" onclick="playUrl(this.closest('.hint-rec-row').dataset.audio)">▶</button>`:''}
+    ${audioUrl?'<button class="hint-play-btn" onclick="playUrl(this.closest('.hint-rec-row').dataset.audio)">▶</button>':''}
     <button class="hint-del-btn" onclick="this.closest('.hint-rec-row').remove()">🗑️</button>`;
   list.appendChild(row);
 }
-
-let hintRecRow=null;
 function toggleHintRec(btn){
   const row=btn.closest('.hint-rec-row');
   if(recOn&&hintRecRow===row){stopRec();return;}
   if(recOn)stopRec();
-  hintRecRow=row;
-  // Start recording for this hint
-  startHintRec(btn, row);
+  hintRecRow=row;startHintRec(btn,row);
 }
-
-async function startHintRec(btn, row){
+async function startHintRec(btn,row){
   try{
     if(recStream)recStream.getTracks().forEach(t=>t.stop());
     recStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
@@ -751,18 +687,10 @@ async function startHintRec(btn, row){
       const blob=new Blob(recChunks,{type:mime||'audio/webm'});
       const fr=new FileReader();
       fr.onload=ev=>{
-        const dataUrl=ev.target.result;
-        row.dataset.audio=dataUrl;
-        // Add play button if not exists
-        if(!row.querySelector('.hint-play-btn')){
-          const pb=document.createElement('button');
-          pb.className='hint-play-btn';pb.textContent='▶';
-          pb.onclick=()=>playUrl(row.dataset.audio);
-          btn.after(pb);
-        }
+        row.dataset.audio=ev.target.result;
+        if(!row.querySelector('.hint-play-btn')){const pb=document.createElement('button');pb.className='hint-play-btn';pb.textContent='▶';pb.onclick=()=>playUrl(row.dataset.audio);btn.after(pb);}
         btn.classList.remove('on');btn.textContent='🎤';
-        recStream?.getTracks().forEach(t=>t.stop());recStream=null;
-        recOn=false;recKey=null;hintRecRow=null;
+        recStream?.getTracks().forEach(t=>t.stop());recStream=null;recOn=false;hintRecRow=null;
         document.getElementById('recst').textContent='✅ הוקלט!';
       };
       fr.readAsDataURL(blob);
@@ -774,42 +702,7 @@ async function startHintRec(btn, row){
   }catch(e){alert('⚠️ אין גישה למיקרופון');}
 }
 
-function previewHints(){
-  const hints = document.getElementById('modal-hints').value.split('\n').map(h=>h.trim()).filter(h=>h);
-  if(!hints.length){toast('אין שאלות');return;}
-  let i=0;
-  const next = () => { if(i<hints.length) speak(hints[i++], .78, 1.2, ()=>setTimeout(next,400)); };
-  next();
-}
-
-function saveModal(){
-  if(modalIdx<0)return;
-  stopRec();
-  const z=edZones[modalIdx];
-  z.ttsText=document.getElementById('tts-q').value.trim();
-  z.ttsAnswer=document.getElementById('tts-a').value.trim();
-  z.emoji=document.getElementById('modal-emoji').value.trim()||'🔍';
-  // Collect hints from hint rows
-  const hintRows=document.querySelectorAll('.hint-rec-row');
-  z.discussHints=[];
-  z.discussAudios=[];
-  hintRows.forEach(row=>{
-    const txt=row.querySelector('.hint-txt')?.value?.trim()||'';
-    const audio=row.dataset.audio||null;
-    if(txt||audio){
-      z.discussHints.push(txt);
-      z.discussAudios.push(audio);
-    }
-  });
-  if(!z.label&&z.ttsText)z.label=z.ttsText;
-  z.audioQUrl=modalQUrl||null;
-  z.audioAUrl=modalAUrl||null;
-  renderZones();drawCanvas();closeModal();
-}
-
-// ═══════════════════════════════════════
-// RECORDING
-// ═══════════════════════════════════════
+// ═══ RECORDING ═══
 function toggleRec(key){if(recOn&&recKey===key)stopRec();else{if(recOn)stopRec();setTimeout(()=>startRec(key),300);}}
 async function startRec(key){
   try{
@@ -823,182 +716,75 @@ async function startRec(key){
       const blob=new Blob(recChunks,{type:mime||'audio/webm'});
       const fr=new FileReader();
       fr.onload=ev=>{
-        const dataUrl=ev.target.result;
-        recStream?.getTracks().forEach(t=>t.stop());recStream=null;
-        recOn=false;recKey=null;
-        if(key==='q'){modalQUrl=dataUrl;document.getElementById('play-q-btn').style.display='inline-block';document.getElementById('del-q-btn').style.display='inline-block';document.getElementById('q-ind').style.display='block';document.getElementById('rec-q-btn').classList.remove('on');document.getElementById('rec-q-btn').textContent='🎤 הקלט';}
-        else if(key==='a'){modalAUrl=dataUrl;document.getElementById('play-a-btn').style.display='inline-block';document.getElementById('del-a-btn').style.display='inline-block';document.getElementById('a-ind').style.display='block';document.getElementById('rec-a-btn').classList.remove('on');document.getElementById('rec-a-btn').textContent='🎤 הקלט';}
-        else if(key==='intro'){edIntroAudio=dataUrl;document.getElementById('play-intro-btn').style.display='inline-block';document.getElementById('rec-intro-btn').classList.remove('on');document.getElementById('rec-intro-btn').textContent='🎤 הקלט';document.getElementById('rec-intro-st').textContent='✅';}
-        else if(key==='win'){edWinAudio=dataUrl;document.getElementById('play-win-btn').style.display='inline-block';document.getElementById('rec-win-btn').classList.remove('on');document.getElementById('rec-win-btn').textContent='🎤 הקלט';document.getElementById('rec-win-st').textContent='✅';}
+        const url=ev.target.result;
+        recStream?.getTracks().forEach(t=>t.stop());recStream=null;recOn=false;recKey=null;
+        if(key==='q'){modalQUrl=url;document.getElementById('play-q-btn').style.display='inline-block';document.getElementById('del-q-btn').style.display='inline-block';document.getElementById('q-ind').style.display='block';document.getElementById('rec-q-btn').classList.remove('on');document.getElementById('rec-q-btn').textContent='🎤 הקלט';}
+        else if(key==='a'){modalAUrl=url;document.getElementById('play-a-btn').style.display='inline-block';document.getElementById('del-a-btn').style.display='inline-block';document.getElementById('a-ind').style.display='block';document.getElementById('rec-a-btn').classList.remove('on');document.getElementById('rec-a-btn').textContent='🎤 הקלט';}
+        else if(key==='intro'){edIntroAudio=url;document.getElementById('play-intro-btn').style.display='inline-block';document.getElementById('rec-intro-btn').classList.remove('on');document.getElementById('rec-intro-btn').textContent='🎤 הקלט';document.getElementById('rec-intro-st').textContent='✅';}
+        else if(key==='win'){edWinAudio=url;document.getElementById('play-win-btn').style.display='inline-block';document.getElementById('rec-win-btn').classList.remove('on');document.getElementById('rec-win-btn').textContent='🎤 הקלט';document.getElementById('rec-win-st').textContent='✅';}
         document.getElementById('recst').textContent=key==='q'||key==='a'?'✅ הוקלט!':'';
       };
       fr.readAsDataURL(blob);
     };
     mediaRec.start(100);recKey=key;recOn=true;recSec=0;
-    const btnId=key==='q'?'rec-q-btn':key==='a'?'rec-a-btn':key==='intro'?'rec-intro-btn':'rec-win-btn';
+    const btnId={'q':'rec-q-btn','a':'rec-a-btn','intro':'rec-intro-btn','win':'rec-win-btn'}[key];
+    const stId={'q':'recst','a':'recst','intro':'rec-intro-st','win':'rec-win-st'}[key];
     const btn=document.getElementById(btnId);if(btn){btn.classList.add('on');btn.textContent='⏹ עצור';}
-    const stId=key==='q'||key==='a'?'recst':key==='intro'?'rec-intro-st':'rec-win-st';
     const st=document.getElementById(stId);if(st)st.textContent='⏺ מקליט...';
     clearInterval(recTimer);recTimer=setInterval(()=>{recSec++;if(recSec>=20)stopRec();},1000);
   }catch(e){alert('⚠️ אין גישה למיקרופון');}
 }
 function stopRec(){clearInterval(recTimer);if(mediaRec?.state==='recording')mediaRec.stop();recOn=false;recKey=null;}
 
-// ═══════════════════════════════════════
-// SAVE / LOAD / EXPORT / IMPORT / SHARE
-// ═══════════════════════════════════════
+// ═══ SAVE ═══
 function buildGame(){
-  const name=document.getElementById('gname').value||'משחק';
-  const introText=document.getElementById('intro-text').value.trim();
-  const winText=document.getElementById('win-text').value.trim();
-  const id=edGame?.id||Date.now().toString();
   return{
-    id,name,type:'find',
+    id:edGame?.id||Date.now().toString(),
+    name:document.getElementById('gname').value||'משחק',
+    type:'find',
     imageSrc:edImgSrc,
     zones:edZones.map(z=>({...z})),
-    scenes:[{imageSrc:edImgSrc,zones:edZones.map(z=>({...z}))}],
-    introText,introAudioUrl:edIntroAudio||null,
-    winText,winAudioUrl:edWinAudio||null,
+    introText:document.getElementById('intro-text').value.trim(),
+    introAudioUrl:edIntroAudio||null,
+    winText:document.getElementById('win-text').value.trim(),
+    winAudioUrl:edWinAudio||null,
     date:new Date().toLocaleDateString('he-IL')
   };
 }
-function doSave(){
+async function doSave(){
   if(!edImgSrc){toast('❌ חסרה תמונה');return null;}
   if(!edZones.length){toast('❌ סמן לפחות אזור אחד');return null;}
+  const btn=document.getElementById('save-btn');btn.textContent='שומר...';btn.disabled=true;
   const g=buildGame();
-  savedGames=[g,...savedGames.filter(x=>x.id!==g.id)];
-  edGame=g;
-  downloadUpdatedHTML();
-  toast('💾 נשמר! קובץ index.html חדש ירד – העלי אותו ל-GitHub');
-  return g;
+  if(edGame){g._dbid=edGame._dbid;g._share=edGame._share;}
+  const saved=await dbSave(g);
+  btn.textContent='💾 שמור';btn.disabled=false;
+  if(!saved)return null;
+  savedGames=[saved,...savedGames.filter(x=>x._dbid!==saved._dbid&&x.id!==saved.id)];
+  edGame=saved;
+  toast('💾 נשמר בענן! ✅');
+  return saved;
 }
+async function doSavePlay(){const g=await doSave();if(g)showIntro(g);}
 
-function downloadUpdatedHTML(){
-  // Get current page HTML and replace the embedded games with updated ones
-  const currentHTML = document.documentElement.outerHTML;
-  const gamesJSON = JSON.stringify(savedGames, null, 2);
-  // Replace EMBEDDED_GAMES content
-  const updated = currentHTML.replace(
-    /const EMBEDDED_GAMES = \[[\s\S]*?\];(\s*\/\/ ═══ end)/,
-    'const EMBEDDED_GAMES = ' + gamesJSON + ';$1'
-  ).replace(
-    /const EMBEDDED_GAMES = \[[\s\S]*?\];(\s*
-\s*window)/,
-    'const EMBEDDED_GAMES = ' + gamesJSON + ';$1'
-  );
-  const blob = new Blob([updated], {type:'text/html'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'index.html';
-  a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
-}
-
-function loadGames(){ loadGamesFromDB(); }
-function renderHome(){
-  const grid=document.getElementById('games-grid');
-  const sec=document.getElementById('saved-sec');
-  const empty=document.getElementById('empty-msg');
-  if(!savedGames.length){sec.style.display='none';empty.style.display='block';return;}
-  sec.style.display='block';empty.style.display='none';
-  grid.innerHTML='';
-  savedGames.forEach(g=>{
-    const c=document.createElement('div');c.className='gcard';
-    c.dataset.gid=g.id;
-    c.innerHTML=`<img src="${g.imageSrc}" loading="lazy"><div class="gcard-name">${esc(g.name)}</div>
-    <div class="gcard-btns">
-      <button class="gcbtn play" onclick="gAction('play','${g.id}')">▶ שחק</button>
-      <button class="gcbtn edit" onclick="gAction('edit','${g.id}')">✏️ ערוך</button>
-      <button class="gcbtn share" onclick="gAction('share','${g.id}')">🔗 שתף</button>
-      <button class="gcbtn del" onclick="gAction('del','${g.id}')">🗑️</button>
-    </div>`;
-    grid.appendChild(c);
-  });
-}
-
-function gAction(action, id){
-  const game=savedGames.find(g=>g.id===id);
-  if(!game){toast('משחק לא נמצא');return;}
-  if(action==='play'){wA();showIntro(game);}
-  else if(action==='edit'){openEditGame(game);}
-  else if(action==='share'){
-    if(game._share_id){
-      const link=getShareLink(game._share_id);
-      navigator.clipboard?.writeText(link).then(()=>toast('🔗 לינק הועתק! שלחי להורים')).catch(()=>prompt('העתיקי את הלינק:',link));
-    } else {
-      toast('שמרי קודם את המשחק');
-    }
-  }
-  else if(action==='del'){delGame(id);}
-}
-
-async function delGame(id){
-  if(!confirm('למחוק?'))return;
-  const game=savedGames.find(g=>g.id===id);
-  if(game?._db_id) await dbRequest('DELETE',null,`?id=eq.${game._db_id}`);
-  savedGames=savedGames.filter(g=>g.id!==id);
-  renderHome();
-}
-function exportGames(){
-  if(!savedGames.length){toast('אין משחקים');return;}
-  const clean=savedGames.map(g=>{const {_db_id,_share_id,...rest}=g;return rest;});
-  const b=new Blob([JSON.stringify(clean,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='משחקים-שלי.json';a.click();
-  toast('📤 גיבוי ירד!');
-}
-function importGames(e){
-  const file=e.target.files?.[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    try{
-      const data=JSON.parse(ev.target.result);
-      if(!Array.isArray(data))throw new Error('not array');
-      // Replace all games with imported ones
-      savedGames=data;
-      renderHome();
-      toast('✅ יובאו '+data.length+' משחקים');
-    }catch(ex){
-      toast('❌ קובץ לא תקין: '+ex.message);
-    }
-  };
-  reader.onerror=()=>toast('❌ שגיאה בקריאת הקובץ');
-  reader.readAsText(file);
-  e.target.value='';
-}
-
-function shareGame(id){
-  const game=savedGames.find(g=>g.id===id);if(!game)return;
-  const html=buildPlayerOnlyHTML(game);
-  const b=new Blob([html],{type:'text/html'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=game.name+'.html';a.click();
-  toast('📤 קובץ משחק נשמר!');
-}
-
-// ═══════════════════════════════════════
-// INTRO
-// ═══════════════════════════════════════
+// ═══ INTRO ═══
 function showIntro(game){
   if(!game)return;curGame=game;
   document.getElementById('intro-img').src=game.imageSrc||'';
   document.getElementById('intro-title').textContent=game.introText||game.name;
-  const zones=game.zones||game.scenes?.[0]?.zones||[];
-  document.getElementById('intro-sub').textContent=zones.length+' שאלות · בוא נשחק!';
+  document.getElementById('intro-sub').textContent=(game.zones||[]).length+' שאלות · בוא נשחק!';
   showScr('intro');
   setTimeout(()=>spOp(game.introAudioUrl,game.introText||game.name,null),700);
 }
 function beginGame(){if(curGame)startGame(curGame);}
 
-// ═══════════════════════════════════════
-// PLAYER
-// ═══════════════════════════════════════
+// ═══ PLAYER ═══
 function startGame(game){
   curGame=game;curTask=0;plScore=0;wrongPer=0;tapping=false;
-  // Normalize zones
-  const zones=game.zones||game.scenes?.[0]?.zones||[];
-  curGame._zones=zones.map(z=>({...z,found:false}));
+  curGame._zones=(game.zones||[]).map(z=>({...z,found:false}));
   document.getElementById('pltitle').textContent=game.name;
   document.getElementById('plscore').textContent=0;
-  document.getElementById('plimg').src=game.imageSrc||game.scenes?.[0]?.imageSrc||'';
+  document.getElementById('plimg').src=game.imageSrc||'';
   document.getElementById('foundlayer').innerHTML='';
   document.getElementById('th-panel').classList.remove('show');
   thPending=null;
@@ -1009,8 +795,7 @@ function startGame(game){
   tl.ontouchstart=e=>{e.preventDefault();if(e.touches[0])handleTap(e.touches[0]);};
   showScr('player');
   const img=document.getElementById('plimg');
-  if(img.complete&&img.naturalWidth)loadTask(0);
-  else img.onload=()=>loadTask(0);
+  if(img.complete&&img.naturalWidth)loadTask(0);else img.onload=()=>loadTask(0);
 }
 function loadTask(i){
   wrongPer=0;tapping=false;clearTimeout(hintTimer);
@@ -1044,35 +829,17 @@ function onCorrect(task){
   playOk();confetti(22);
   if(thMode){
     window.speechSynthesis?.cancel();
-    // Show therapist panel
     const ans=task.ttsAnswer||task.label||'';
     document.getElementById('th-answer').textContent='מצאת! 🎉'+(ans?' – '+ans:'');
-    // Hints
     const hints=task.discussHints?.length?task.discussHints:['מה עוד אתה רואה?','מה הצבע שלו?','איפה עוד ראית כזה?'];
     const audios=task.discussAudios||[];
     const hEl=document.getElementById('th-hints');hEl.innerHTML='';
-    hints.forEach((h,i)=>{
-      const c=document.createElement('div');c.className='hint-chip';
-      c.innerHTML='💬 '+h+(audios[i]?' 🔊':'');
-      c.onclick=()=>{if(audios[i])playUrl(audios[i]);else speak(h);};
-      hEl.appendChild(c);
-    });
-    // Play answer button
-    const pb=document.getElementById('th-play-btn');
-    pb.onclick=()=>spOp(task.audioAUrl,ans,null);
+    hints.forEach((h,i)=>{const c=document.createElement('div');c.className='hint-chip';c.innerHTML='💬 '+h+(audios[i]?' 🔊':'');c.onclick=()=>{if(audios[i])playUrl(audios[i]);else speak(h);};hEl.appendChild(c);});
+    document.getElementById('th-play-btn').onclick=()=>spOp(task.audioAUrl,ans,null);
     document.getElementById('th-panel').classList.add('show');
-    thPending=()=>{
-      curTask++;
-      const all=curGame._zones;
-      if(curTask>=all.length)setTimeout(winScreen,400);
-      else loadTask(curTask);
-    };
-  } else {
-    setTimeout(()=>{
-      spOp(task.audioAUrl,task.ttsAnswer,()=>{
-        setTimeout(()=>{curTask++;const all=curGame._zones;if(curTask>=all.length)setTimeout(winScreen,400);else loadTask(curTask);},700);
-      });
-    },300);
+    thPending=()=>{curTask++;if(curTask>=curGame._zones.length)setTimeout(winScreen,400);else loadTask(curTask);};
+  }else{
+    setTimeout(()=>{spOp(task.audioAUrl,task.ttsAnswer,()=>{setTimeout(()=>{curTask++;if(curTask>=curGame._zones.length)setTimeout(winScreen,400);else loadTask(curTask);},700);});},300);
   }
 }
 function onWrong(task){
@@ -1099,8 +866,7 @@ function showHint(task){
 function thContinue(){document.getElementById('th-panel').classList.remove('show');if(thPending){thPending();thPending=null;}}
 function toggleTH(){
   thMode=!thMode;
-  const btn=document.getElementById('th-toggle');
-  btn.classList.toggle('on',thMode);
+  const btn=document.getElementById('th-toggle');btn.classList.toggle('on',thMode);
   btn.textContent='🧑‍⚕️ מצב מטפל: '+(thMode?'דלוק ✅':'כבוי');
   if(!thMode){document.getElementById('th-panel').classList.remove('show');thPending=null;}
   toast(thMode?'מצב מטפל פעיל 🧑‍⚕️':'מצב רגיל');
@@ -1115,100 +881,27 @@ function winScreen(){
 }
 function replayGame(){if(curGame)startGame(curGame);}
 
-// ═══════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════
+// ═══ HELPERS ═══
 function addRipple(x,y,good){const wrap=document.getElementById('imgwrap');const el=document.createElement('div');el.className=`ripple ${good?'good':'bad'}`;el.style.left=x+'px';el.style.top=y+'px';wrap.appendChild(el);setTimeout(()=>el.remove(),600);}
 function confetti(n){const wrap=document.getElementById('confwrap');const cs=['#FF6B6B','#FFD700','#4ECDC4','#A55EEA','#FF8E53','#26de81'];for(let i=0;i<n;i++){const p=document.createElement('div');p.className='cp';p.style.cssText=`left:${Math.random()*100}vw;background:${cs[i%cs.length]};animation-duration:${1.6+Math.random()*2.4}s;animation-delay:${Math.random()*.5}s;width:${9+Math.random()*9}px;height:${9+Math.random()*9}px;border-radius:${Math.random()>.5?'50%':'3px'};`;wrap.appendChild(p);setTimeout(()=>p.remove(),4500);}}
 let toastT;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.style.opacity=1;clearTimeout(toastT);toastT=setTimeout(()=>el.style.opacity=0,2400);}
 window.addEventListener('resize',()=>{if(edImgEl&&cvs){const maxW=cvs.parentElement.clientWidth||(window.innerWidth-24);cvs.width=Math.round(maxW);cvs.height=Math.round(maxW*edImgEl.height/edImgEl.width);drawCanvas();}});
 
-// ═══════════════════════════════════════
-// PLAYER-ONLY HTML FOR SHARING
-// ═══════════════════════════════════════
-function buildPlayerOnlyHTML(game){
-  const zones=game.zones||game.scenes?.[0]?.zones||[];
-  return `<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>${game.name}</title>
-<script>const G=${JSON.stringify({...game,zones})}<\/script>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap" rel="stylesheet">
-<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:"Varela Round",sans-serif;background:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
-#intro{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;gap:16px;text-align:center;background:linear-gradient(160deg,#1a1a2e,#16213e,#0f3460);}
-#intro img{width:100%;max-width:420px;border-radius:22px;}
-.it{font-family:"Fredoka One",cursive;font-size:clamp(1.8rem,7vw,3.5rem);color:#fff;}
-.is{color:rgba(255,255,255,.7);font-size:1.1rem;font-weight:700;}
-.ib{background:#26de81;border:none;border-radius:50px;padding:16px 36px;font-family:"Fredoka One",cursive;font-size:1.3rem;color:#fff;cursor:pointer;}
-#game{display:none;flex-direction:column;flex:1;}
-.hdr{background:linear-gradient(135deg,#16213e,#0f3460);padding:11px 14px;display:flex;align-items:center;gap:10px;}
-.ht{font-family:"Fredoka One",cursive;font-size:1.2rem;color:#fff;flex:1;}
-.hs{font-family:"Fredoka One",cursive;font-size:1.2rem;color:#FFE66D;}
-.bd{flex:1;display:flex;flex-direction:column;padding:10px;gap:9px;}
-.pd{display:flex;justify-content:center;gap:7px;padding:2px 0;}
-.dt{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25);transition:all .3s;}
-.dt.dn{background:#26de81;}.dt.cu{background:#FFE66D;}
-.tc{background:#fff;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:9px;}
-.te{font-size:2.2rem;cursor:pointer;}
-.tx{font-family:"Fredoka One",cursive;font-size:clamp(1rem,4.5vw,1.65rem);color:#2d3436;flex:1;}
-.tk{background:#4ECDC4;border:none;border-radius:9px;width:38px;height:38px;font-size:1.1rem;cursor:pointer;}
-.iw{flex:1;border-radius:16px;overflow:hidden;position:relative;box-shadow:0 8px 26px rgba(0,0,0,.4);min-height:180px;}
-#pi{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;}
-#tl{position:absolute;inset:0;}
-#fl{position:absolute;inset:0;pointer-events:none;}
-.fz{position:absolute;border:4px solid #26de81;background:rgba(38,222,129,.25);}
-.hz{position:absolute;border:4px dashed #FFE66D;background:rgba(255,230,109,.18);animation:hp .8s ease-in-out infinite;}
-.fb{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:800;}
-.fb.ok{background:radial-gradient(circle,rgba(38,222,129,.96),rgba(20,180,100,.98));}
-.fb.no{background:radial-gradient(circle,rgba(255,107,107,.94),rgba(220,60,60,.97));}
-.fe{font-size:6rem;}.ft{font-family:"Fredoka One",cursive;font-size:3rem;color:#fff;}.fs{font-size:1.2rem;color:rgba(255,255,255,.9);font-weight:700;margin-top:8px;}
-#win{display:none;flex-direction:column;background:linear-gradient(150deg,#f6d365,#fda085 50%,#f093fb);align-items:center;justify-content:center;min-height:100vh;padding:28px;gap:16px;text-align:center;}
-.wl{font-size:5rem;}.wt{font-family:"Fredoka One",cursive;font-size:clamp(2.2rem,8vw,4.5rem);color:#fff;}.wc{background:#fff;border-radius:24px;padding:18px 34px;}
-.wn{font-family:"Fredoka One",cursive;font-size:5rem;color:#FF6B6B;line-height:1;}
-.wb{border:none;border-radius:50px;padding:13px 26px;font-family:"Fredoka One",cursive;font-size:1.15rem;cursor:pointer;background:#FF6B6B;color:#fff;}
-.cw{position:fixed;inset:0;pointer-events:none;z-index:900;overflow:hidden;}
-.cp{position:absolute;top:-18px;animation:cf linear forwards;}
-@keyframes hp{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
-@keyframes cf{0%{transform:translateY(-18px) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
-@keyframes sk{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-</style></head><body>
-<div id="intro"><img src="${game.imageSrc}"><div class="it">${game.introText||game.name}</div><div class="is">${zones.length} שאלות</div><button class="ib" onclick="sg()">▶ התחל!</button></div>
-<div id="game"><div class="hdr"><div class="ht">${game.name}</div><div class="hs">⭐<span id="sc">0</span></div></div>
-<div class="bd"><div class="pd" id="pd"></div><div class="tc" id="tc"><div class="te" id="em" onclick="spQ()">🔍</div><div class="tx" id="tx">מצא...</div><button class="tk" onclick="spQ()">🔊</button></div>
-<div class="iw" id="iw"><img id="pi" src="${game.imageSrc}" draggable="false"><div id="tl"></div><div id="fl"></div></div></div></div>
-<div class="fb" id="fb"><div class="fe" id="fe">🎉</div><div class="ft" id="ft"></div><div class="fs" id="fs"></div></div>
-<div id="win"><div class="wl">🏆</div><div class="wt">כל הכבוד!<br>ניצחת! 🎉</div><div class="wc"><div class="wn" id="wn">0</div></div><button class="wb" onclick="location.reload()">🔄 שוב</button></div>
-<div class="cw" id="cw"></div>
-<script>
-let cv=0,sc=0,wp=0,tp=false,ht=null,AC=null;
-const Z=G.zones||[];
-function wA(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}
-function pOk(){try{wA();[523,659,784,1047].forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='sine';o.frequency.value=f;const t=AC.currentTime+i*.13;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.38);o.start(t);o.stop(t+.38);});}catch(e){}}
-function pFail(){try{wA();const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='sawtooth';o.frequency.setValueAtTime(280,AC.currentTime);o.frequency.linearRampToValueAtTime(120,AC.currentTime+.35);g.gain.setValueAtTime(.28,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.38);o.start(AC.currentTime);o.stop(AC.currentTime+.38);}catch(e){}}
-function heV(){return(window.speechSynthesis?.getVoices()||[]).filter(v=>v.lang?.toLowerCase().startsWith('he'));}
-function spk(t,r,p,cb){if(!window.speechSynthesis||!t?.trim()){cb&&cb();return;}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='he-IL';u.rate=r||.78;u.pitch=p||1.2;const v=heV()[0];if(v)u.voice=v;if(cb){u.onend=cb;u.onerror=cb;}setTimeout(()=>window.speechSynthesis.speak(u),80);}
-function pUrl(url,cb){if(!url){cb&&cb();return;}try{const a=new Audio(url);a.onended=()=>cb&&cb();a.onerror=()=>cb&&cb();a.play();}catch(e){cb&&cb();}}
-function spOp(url,txt,cb){if(url)pUrl(url,cb);else if(txt?.trim())spk(txt,.78,1.2,cb);else cb&&cb();}
-window.speechSynthesis?.getVoices();if(window.speechSynthesis)window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
-function sg(){document.getElementById('intro').style.display='none';document.getElementById('game').style.display='flex';Z.forEach((_,i)=>{const d=document.createElement('div');d.className='dt'+(i===0?' cu':'');d.id='d'+i;document.getElementById('pd').appendChild(d);});const img=document.getElementById('pi');if(img.complete&&img.naturalWidth)lT(0);else img.onload=()=>lT(0);document.getElementById('tl').onclick=hT;document.getElementById('tl').ontouchstart=e=>{e.preventDefault();if(e.touches[0])hT(e.touches[0]);};}
-function lT(i){wp=0;tp=false;clearTimeout(ht);document.querySelectorAll('.hz').forEach(h=>h.remove());const t=Z[i];if(!t)return;document.getElementById('em').textContent=t.emoji||'🔍';document.getElementById('tx').textContent=t.label||t.ttsText||'מצא...';document.querySelectorAll('.dt').forEach((d,j)=>{d.className='dt'+(j<i?' dn':j===i?' cu':'');});setTimeout(spQ,500);}
-function spQ(){const t=Z[cv];if(!t)return;spOp(t.audioQUrl,t.ttsText||t.label,null);}
-function hT(e){if(tp)return;const t=Z[cv];if(!t||t.found)return;wA();const img=document.getElementById('pi'),ir=img.getBoundingClientRect(),wr=document.getElementById('iw').getBoundingClientRect();const px=(e.clientX-ir.left)/ir.width,py=(e.clientY-ir.top)/ir.height;if(px<0||px>1||py<0||py>1)return;let hit=false;if(t.shape==='circle'){const cx=t.x+t.w/2,cy=t.y+t.h/2,dx=(px-cx)/(t.w/2*1.2),dy=(py-cy)/(t.h/2*1.2);hit=dx*dx+dy*dy<=1;}else hit=px>=t.x&&px<=t.x+t.w&&py>=t.y&&py<=t.y+t.h;if(hit){tp=true;oC(t);}else oW(t);}
-function oC(t){t.found=true;sc+=Math.max(10-wp*2,2);document.getElementById('sc').textContent=sc;const d=document.getElementById('d'+cv);if(d)d.className='dt dn';mF(t);document.querySelectorAll('.hz').forEach(h=>h.remove());clearTimeout(ht);pOk();cn(22);setTimeout(()=>{spOp(t.audioAUrl,t.ttsAnswer,()=>{setTimeout(()=>{cv++;if(cv>=Z.length)wS();else lT(cv);},700);});},300);}
-function oW(t){wp++;pFail();try{navigator.vibrate&&navigator.vibrate([80,40,80]);}catch(e){}const c=document.getElementById('tc');c.style.animation='sk .35s ease';c.addEventListener('animationend',()=>c.style.animation='',{once:true});if(wp>=3){clearTimeout(ht);ht=setTimeout(()=>sH(t),800);}}
-function mF(t){const img=document.getElementById('pi'),ir=img.getBoundingClientRect(),wr=document.getElementById('iw').getBoundingClientRect();const el=document.createElement('div');el.className='fz';const x=t.x*ir.width+(ir.left-wr.left),y=t.y*ir.height+(ir.top-wr.top),w=t.w*ir.width,h=t.h*ir.height;el.style.cssText=\`left:\${x}px;top:\${y}px;width:\${w}px;height:\${h}px;border-radius:\${t.shape==='circle'?'50%':'12px'};\`;document.getElementById('fl').appendChild(el);}
-function sH(t){document.querySelectorAll('.hz').forEach(h=>h.remove());const img=document.getElementById('pi'),ir=img.getBoundingClientRect(),wr=document.getElementById('iw').getBoundingClientRect();const el=document.createElement('div');el.className='hz';const x=t.x*ir.width+(ir.left-wr.left),y=t.y*ir.height+(ir.top-wr.top),w=t.w*ir.width,h=t.h*ir.height;el.style.cssText=\`left:\${x}px;top:\${y}px;width:\${w}px;height:\${h}px;border-radius:\${t.shape==='circle'?'50%':'12px'};\`;document.getElementById('fl').appendChild(el);setTimeout(()=>el.remove(),3000);}
-function wS(){document.getElementById('wn').textContent=sc;document.getElementById('game').style.display='none';document.getElementById('win').style.display='flex';cn(70);setTimeout(()=>spOp(G.winAudioUrl,G.winText||'כל הכבוד! ניצחת!',null),800);}
-function cn(n){const w=document.getElementById('cw');const cs=['#FF6B6B','#FFD700','#4ECDC4','#A55EEA','#FF8E53','#26de81'];for(let i=0;i<n;i++){const p=document.createElement('div');p.className='cp';p.style.cssText=\`left:\${Math.random()*100}vw;background:\${cs[i%cs.length]};animation-duration:\${1.6+Math.random()*2.4}s;animation-delay:\${Math.random()*.5}s;width:\${9+Math.random()*9}px;height:\${9+Math.random()*9}px;border-radius:\${Math.random()>.5?'50%':'3px'};\`;w.appendChild(p);setTimeout(()=>p.remove(),4500);}}
-setTimeout(()=>spOp(G.introAudioUrl,G.introText||G.name,null),700);
-<\/script></body></html>`;
-}
-
-// ═══════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════
+// ═══ INIT ═══
 window.addEventListener('DOMContentLoaded',()=>{
-  try{savedGames=JSON.parse(localStorage.getItem('shachaku')||'[]');}catch(e){savedGames=[];}
-  renderHome();
   wA();
+  const params=new URLSearchParams(window.location.search);
+  const playId=params.get('play');
+  if(playId){
+    sbReq('GET',null,'?share_id=eq.'+playId+'&select=*').then(rows=>{
+      if(!rows.length){document.body.innerHTML='<div style="text-align:center;padding:40px;font-family:Fredoka One,cursive;font-size:2rem;color:#333">משחק לא נמצא 😕</div>';return;}
+      const g={...rows[0].data,_dbid:rows[0].id,_share:rows[0].share_id};
+      showIntro(g);
+    }).catch(()=>{document.body.innerHTML='<div style="padding:40px;text-align:center">שגיאה בטעינה</div>';});
+    return;
+  }
+  dbLoad();
 });
 </script>
 </body>
