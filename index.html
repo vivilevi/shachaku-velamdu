@@ -334,19 +334,30 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 
 <script>
 const COLORS=['#A55EEA','#FF6B6B','#4ECDC4','#FF8E53','#45aaf2','#26de81','#fd9644','#fc5c65'];
-const SB_URL='https://vwrcmzoxfrgrftmfhvan.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3cmNtem94ZnJncmZ0bWZodmFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNDE3NDMsImV4cCI6MjA1NTcxNzc0M30.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3cmNtem94ZnJncmZ0bWZodmFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxNDE3NDMsImV4cCI6MjA1NTcxNzc0M30';
-const SB_TABLE='picture find game';
+const SB_URL=`https://vwrcmzoxfrgrftmfhvan.supabase.co`;
+const SB_KEY=`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3cmNtem94ZnJncmZ0bWZodmFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDExMDIsImV4cCI6MjA4OTc3NzEwMn0.MgnIVWxtaVUJsh5I-7oaZdeEHfrcjjcBP77uE8KoqRs`;
+const SB_TABLE='games';
 
 // ═══ SUPABASE ═══
 async function sbReq(method,body,filter=''){
-  const r=await fetch(SB_URL+'/rest/v1/'+encodeURIComponent(SB_TABLE)+filter,{
-    method,
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':method==='POST'?'return=representation':''},
-    body:body?JSON.stringify(body):null
-  });
-  if(!r.ok){const t=await r.text();throw new Error(t);}
-  return r.status===204?null:r.json();
+  const url=SB_URL+'/rest/v1/'+SB_TABLE+filter;
+  try{
+    const r=await fetch(url,{
+      method,
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+SB_KEY,
+        'Content-Type':'application/json',
+        'Prefer':method==='POST'?'return=representation':''
+      },
+      body:body?JSON.stringify(body):null
+    });
+    if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
+    return r.status===204?null:r.json();
+  }catch(e){
+    console.error('sbReq error:',method,url,e.message);
+    throw e;
+  }
 }
 async function dbLoad(){
   try{
@@ -662,11 +673,16 @@ function renderHintRows(z){
 function addHintRow(){addHintRowWith('',null);}
 function addHintRowWith(txt,audioUrl){
   const list=document.getElementById('hints-list');if(!list)return;
-  const row=document.createElement('div');row.className='hint-rec-row';row.dataset.audio=audioUrl||'';
-  row.innerHTML=`<input class="hint-txt" type="text" placeholder="שאלת שיח..." value="${esc(txt||'')}">
-    <button class="hint-rec-btn" onclick="toggleHintRec(this)">🎤</button>
-    ${audioUrl?'<button class="hint-play-btn" onclick="playUrl(this.closest('.hint-rec-row').dataset.audio)">▶</button>':''}
-    <button class="hint-del-btn" onclick="this.closest('.hint-rec-row').remove()">🗑️</button>`;
+  const row=document.createElement('div');row.className='hint-rec-row';
+  row.dataset.audio=audioUrl||'';
+  const inp=document.createElement('input');inp.className='hint-txt';inp.type='text';
+  inp.placeholder='שאלת שיח...';inp.value=txt||'';row.appendChild(inp);
+  const rb=document.createElement('button');rb.className='hint-rec-btn';rb.textContent='🎤';
+  rb.onclick=function(){toggleHintRec(rb);};row.appendChild(rb);
+  if(audioUrl){const pb=document.createElement('button');pb.className='hint-play-btn';pb.textContent='▶';
+  pb.onclick=function(){playUrl(row.dataset.audio);};row.appendChild(pb);}
+  const db=document.createElement('button');db.className='hint-del-btn';db.textContent='🗑️';
+  db.onclick=function(){row.remove();};row.appendChild(db);
   list.appendChild(row);
 }
 function toggleHintRec(btn){
