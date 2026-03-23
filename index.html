@@ -893,11 +893,8 @@ function downloadUpdatedHTML(){
   a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
 }
-function doSavePlay(){const g=doSave();if(g)showIntro(g);}
-function loadGames(){
-  // savedGames already in memory from EMBEDDED_GAMES - just render
-  renderHome();
-}
+
+function loadGames(){ loadGamesFromDB(); }
 function renderHome(){
   const grid=document.getElementById('games-grid');
   const sec=document.getElementById('saved-sec');
@@ -912,7 +909,7 @@ function renderHome(){
     <div class="gcard-btns">
       <button class="gcbtn play" onclick="gAction('play','${g.id}')">▶ שחק</button>
       <button class="gcbtn edit" onclick="gAction('edit','${g.id}')">✏️ ערוך</button>
-      <button class="gcbtn share" onclick="gAction('share','${g.id}')">📤</button>
+      <button class="gcbtn share" onclick="gAction('share','${g.id}')">🔗 שתף</button>
       <button class="gcbtn del" onclick="gAction('del','${g.id}')">🗑️</button>
     </div>`;
     grid.appendChild(c);
@@ -924,15 +921,30 @@ function gAction(action, id){
   if(!game){toast('משחק לא נמצא');return;}
   if(action==='play'){wA();showIntro(game);}
   else if(action==='edit'){openEditGame(game);}
-  else if(action==='share'){shareGame(id);}
+  else if(action==='share'){
+    if(game._share_id){
+      const link=getShareLink(game._share_id);
+      navigator.clipboard?.writeText(link).then(()=>toast('🔗 לינק הועתק! שלחי להורים')).catch(()=>prompt('העתיקי את הלינק:',link));
+    } else {
+      toast('שמרי קודם את המשחק');
+    }
+  }
   else if(action==='del'){delGame(id);}
 }
 
-function delGame(id){if(!confirm('למחוק?'))return;savedGames=savedGames.filter(g=>g.id!==id);try{localStorage.setItem('shachaku',JSON.stringify(savedGames));}catch(e){}renderHome();}
+async function delGame(id){
+  if(!confirm('למחוק?'))return;
+  const game=savedGames.find(g=>g.id===id);
+  if(game?._db_id) await dbRequest('DELETE',null,`?id=eq.${game._db_id}`);
+  savedGames=savedGames.filter(g=>g.id!==id);
+  renderHome();
+}
 function exportGames(){
   if(!savedGames.length){toast('אין משחקים');return;}
-  downloadUpdatedHTML();
-  toast('📤 קובץ index.html ירד – העלי ל-GitHub!');
+  const clean=savedGames.map(g=>{const {_db_id,_share_id,...rest}=g;return rest;});
+  const b=new Blob([JSON.stringify(clean,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='משחקים-שלי.json';a.click();
+  toast('📤 גיבוי ירד!');
 }
 function importGames(e){
   const file=e.target.files?.[0];if(!file)return;
