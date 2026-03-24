@@ -450,23 +450,32 @@ async function sbGet() {
 // ═══ SUPABASE STORAGE ═══
 async function uploadAudio(base64DataUrl, filename) {
   if(!base64DataUrl || !base64DataUrl.startsWith('data:')) return base64DataUrl;
-  // Convert base64 to blob
-  const res = await fetch(base64DataUrl);
-  const blob = await res.blob();
-  const ext = blob.type.includes('webm') ? 'webm' : 'wav';
-  const path = filename + '.' + ext;
-  const r = await fetch(SB_URL+'/storage/v1/object/audio/'+path, {
-    method: 'POST',
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': 'Bearer '+SB_KEY,
-      'Content-Type': blob.type,
-      'x-upsert': 'true'
-    },
-    body: blob
-  });
-  if(!r.ok) return base64DataUrl; // fallback to base64 if upload fails
-  return SB_URL+'/storage/v1/object/public/audio/'+path;
+  try{
+    // Convert base64 data URL to blob manually
+    const parts = base64DataUrl.split(',');
+    const mime = parts[0].split(':')[1].split(';')[0];
+    const binary = atob(parts[1]);
+    const bytes = new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+    const blob = new Blob([bytes], {type: mime});
+    const ext = mime.includes('webm') ? 'webm' : mime.includes('mp4') ? 'mp4' : 'wav';
+    const path = filename + '.' + ext;
+    const r = await fetch(SB_URL+'/storage/v1/object/audio/'+path, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer '+SB_KEY,
+        'Content-Type': mime,
+        'x-upsert': 'true'
+      },
+      body: blob
+    });
+    if(!r.ok){console.error('upload failed:',r.status);return base64DataUrl;}
+    return SB_URL+'/storage/v1/object/public/audio/'+path;
+  }catch(e){
+    console.error('uploadAudio error:',e);
+    return base64DataUrl;
+  }
 }
 
 async function processAudioUrls(game) {
