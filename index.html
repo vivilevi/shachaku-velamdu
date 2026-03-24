@@ -448,19 +448,19 @@ async function sbGet() {
 
 
 // ═══ SUPABASE STORAGE ═══
-async function uploadAudio(base64DataUrl, filename) {
+async function uploadToStorage(base64DataUrl, filename, bucket, extMap) {
   if(!base64DataUrl || !base64DataUrl.startsWith('data:')) return base64DataUrl;
   try{
-    // Convert base64 data URL to blob manually
     const parts = base64DataUrl.split(',');
     const mime = parts[0].split(':')[1].split(';')[0];
     const binary = atob(parts[1]);
     const bytes = new Uint8Array(binary.length);
     for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
     const blob = new Blob([bytes], {type: mime});
-    const ext = mime.includes('webm') ? 'webm' : mime.includes('mp4') ? 'mp4' : 'wav';
+    let ext = 'bin';
+    for(const [k,v] of Object.entries(extMap)){if(mime.includes(k)){ext=v;break;}}
     const path = filename + '.' + ext;
-    const r = await fetch(SB_URL+'/storage/v1/object/audio/'+path, {
+    const r = await fetch(SB_URL+'/storage/v1/object/'+bucket+'/'+path, {
       method: 'POST',
       headers: {
         'apikey': SB_KEY,
@@ -470,45 +470,71 @@ async function uploadAudio(base64DataUrl, filename) {
       },
       body: blob
     });
-    if(!r.ok){console.error('upload failed:',r.status);return base64DataUrl;}
-    return SB_URL+'/storage/v1/object/public/audio/'+path;
+    if(!r.ok){console.error('upload failed ('+bucket+'):',r.status, await r.text());return base64DataUrl;}
+    return SB_URL+'/storage/v1/object/public/'+bucket+'/'+path;
   }catch(e){
-    console.error('uploadAudio error:',e);
+    console.error('uploadToStorage error:',e);
     return base64DataUrl;
   }
 }
 
+function uploadAudio(base64DataUrl, filename){
+  return uploadToStorage(base64DataUrl, filename, 'audio', {webm:'webm', mp4:'mp4', ogg:'ogg', wav:'wav'});
+}
+function uploadImage(base64DataUrl, filename){
+  return uploadToStorage(base64DataUrl, filename, 'images', {png:'png', gif:'gif', webp:'webp', jpeg:'jpg', jpg:'jpg'});
+}
+
 async function processAudioUrls(game) {
-  // Upload all base64 audio to storage and replace with URLs
   const gameId = game.id || Date.now().toString();
-  const processZone = async (zone, zIdx, sceneIdx) => {
-    const prefix = gameId+'_s'+sceneIdx+'_z'+zIdx;
-    if(zone.audioQUrl?.startsWith('data:')) zone.audioQUrl = await uploadAudio(zone.audioQUrl, prefix+'_q');
-    if(zone.audioAUrl?.startsWith('data:')) zone.audioAUrl = await uploadAudio(zone.audioAUrl, prefix+'_a');
-    if(zone.discussAudios) {
-      zone.discussAudios = await Promise.all(zone.discussAudios.map((a,i) => 
-        a?.startsWith('data:') ? uploadAudio(a, prefix+'_d'+i) : Promise.resolve(a)
-      ));
-    }
-    return zone;
+
+  const uploadIfBase64 = async (url, name, isImage=false) => {
+    if(!url || !url.startsWith('data:')) return url;
+    console.log('uploading:', name, url.length, 'chars');
+    const result = isImage ? await uploadImage(url, name) : await uploadAudio(url, name);
+    console.log('done:', name, '->', result.substring(0,60));
+    return result;
   };
-  
+
   // Process intro/win audio
-  if(game.introAudioUrl?.startsWith('data:')) game.introAudioUrl = await uploadAudio(game.introAudioUrl, gameId+'_intro');
-  if(game.winAudioUrl?.startsWith('data:')) game.winAudioUrl = await uploadAudio(game.winAudioUrl, gameId+'_win');
-  
-  // Process zones in scenes
+  game.introAudioUrl = await uploadIfBase64(game.introAudioUrl, gameId+'_intro');
+  game.winAudioUrl   = await uploadIfBase64(game.winAudioUrl,   gameId+'_win');
+
+  // Process scenes (upload image + audio per scene)
   if(game.scenes) {
     for(let si=0; si<game.scenes.length; si++) {
       const scene = game.scenes[si];
+      scene.imageSrc = await uploadIfBase64(scene.imageSrc, gameId+'_img_s'+si, true);
       if(scene.zones) {
-        scene.zones = await Promise.all(scene.zones.map((z,zi) => processZone({...z}, zi, si)));
+        for(let zi=0; zi<scene.zones.length; zi++) {
+          const z = scene.zones[zi];
+          const prefix = gameId+'_s'+si+'_z'+zi;
+          z.audioQUrl = await uploadIfBase64(z.audioQUrl, prefix+'_q');
+          z.audioAUrl = await uploadIfBase64(z.audioAUrl, prefix+'_a');
+          if(z.discussAudios) {
+            for(let di=0; di<z.discussAudios.length; di++) {
+              z.discussAudios[di] = await uploadIfBase64(z.discussAudios[di], prefix+'_d'+di);
+            }
+          }
+        }
       }
     }
   }
-  // Also process top-level zones
+
+  // Top-level imageSrc + zones (backwards compat)
+  game.imageSrc = await uploadIfBase64(game.imageSrc, gameId+'_img', true);
   if(game.zones) {
-    game.zones = await Promise.all(game.zones.map((z,zi) => processZone({...z}, zi, 0)));
+    for(let zi=0; zi<game.zones.length; zi++) {
+      const z = game.zones[zi];
+      const prefix = gameId+'_z'+zi;
+      z.audioQUrl = await uploadIfBase64(z.audioQUrl, prefix+'_q');
+      z.audioAUrl = await uploadIfBase64(z.audioAUrl, prefix+'_a');
+      if(z.discussAudios) {
+        for(let di=0; di<z.discussAudios.length; di++) {
+          z.discussAudios[di] = await uploadIfBase64(z.discussAudios[di], prefix+'_d'+di);
+        }
+      }
+    }
   }
   return game;
 }
