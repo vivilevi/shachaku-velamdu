@@ -1131,7 +1131,7 @@ function showIntro(game){
   const zones=game.zones||game.scenes?.[0]?.zones||[];
   document.getElementById('intro-sub').textContent=zones.length+' שאלות · בוא נשחק!';
   showScr('intro');
-  setTimeout(()=>spOp(game.introAudioUrl,game.introText||game.name,null),700);
+  setTimeout(()=>{wA();spOp(game.introAudioUrl,game.introText||game.name,null);},1000);
 }
 function beginGame(){window.speechSynthesis?.cancel();if(curGame)startGame(curGame);}
 
