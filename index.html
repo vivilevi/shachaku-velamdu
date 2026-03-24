@@ -132,6 +132,11 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
 .snav-dot{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:"Fredoka One",cursive;font-size:.78rem;color:rgba(255,255,255,.6);transition:all .2s;}
 .snav-dot.active{background:var(--ac);border-color:var(--ac);color:#333;}
 .snav-dot.done{background:var(--g);border-color:var(--g);color:#fff;}
+.scene-bar{display:none;align-items:center;justify-content:center;gap:10px;padding:6px 12px;background:rgba(255,255,255,.07);border-radius:12px;margin-bottom:4px;}
+.scene-bar.show{display:flex;}
+.sbar-btn{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:50px;padding:6px 16px;font-family:"Fredoka One",cursive;font-size:.95rem;color:#fff;cursor:pointer;}
+.sbar-btn:disabled{opacity:.3;cursor:default;}
+.sbar-lbl{font-family:"Fredoka One",cursive;font-size:1rem;color:rgba(255,255,255,.85);}
 .pdots{display:flex;justify-content:center;gap:7px;padding:2px 0;}
 .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25);transition:all .3s;}
 .dot.done{background:var(--g);}
@@ -299,6 +304,11 @@ body{font-family:"Varela Round",sans-serif;background:#f0f4ff;min-height:100vh;}
     <span style="color:rgba(255,255,255,.4);font-size:.72rem">כשדלוק – את שולטת בקצב</span>
   </div>
   <div class="plbody">
+    <div class="scene-bar" id="scene-bar">
+      <button class="sbar-btn" id="sbar-prev" onclick="navScene(-1)">◀</button>
+      <span class="sbar-lbl" id="sbar-lbl">עמוד 1 מתוך 1</span>
+      <button class="sbar-btn" id="sbar-next" onclick="navScene(1)">▶</button>
+    </div>
     <div class="scene-nav" id="scene-nav" style="display:none"></div>
     <div class="pdots" id="pdots"></div>
     <div class="taskcard" id="taskcard">
@@ -437,75 +447,112 @@ function sbHeaders(extra){
 }
 
 async function sbGet() {
-  // Fetch full data for each game
   const r = await fetch(SB_URL+'/rest/v1/games?select=id,name,share_id,data&order=created_at.desc&limit=50', {
     method: 'GET',
     headers: sbHeaders({'Prefer': 'count=none'})
   });
   if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
-  return r.json();
+  const rows = await r.json();
+  // Return lightweight stubs — strip heavy base64, keep only URL-based imageSrc
+  return rows.map(row => {
+    const d = row.data || {};
+    const imgSrc = (d.imageSrc && !d.imageSrc.startsWith('data:')) ? d.imageSrc
+      : (d.scenes?.[0]?.imageSrc && !d.scenes[0].imageSrc.startsWith('data:')) ? d.scenes[0].imageSrc
+      : '';
+    return {id: row.id, name: row.name || d.name, share_id: row.share_id,
+            _dbid: row.id, _share: row.share_id, imageSrc: imgSrc, _stub: true};
+  });
+}
+
+async function sbGetFull(dbid) {
+  const r = await fetch(SB_URL+'/rest/v1/games?id=eq.'+dbid+'&select=*', {
+    method: 'GET', headers: sbHeaders()
+  });
+  if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
+  const rows = await r.json();
+  if(!rows.length) throw new Error('לא נמצא');
+  const row = rows[0];
+  return {...row.data, _dbid: row.id, _share: row.share_id, name: row.name||row.data?.name};
 }
 
 
 // ═══ SUPABASE STORAGE ═══
-async function uploadToStorage(base64DataUrl, filename, bucket, extMap) {
+async function uploadAudio(base64DataUrl, filename) {
   if(!base64DataUrl || !base64DataUrl.startsWith('data:')) return base64DataUrl;
   try{
+    // Convert base64 data URL to blob manually
     const parts = base64DataUrl.split(',');
     const mime = parts[0].split(':')[1].split(';')[0];
     const binary = atob(parts[1]);
     const bytes = new Uint8Array(binary.length);
     for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
     const blob = new Blob([bytes], {type: mime});
-    let ext = 'bin';
-    for(const [k,v] of Object.entries(extMap)){if(mime.includes(k)){ext=v;break;}}
+    const ext = mime.includes('webm') ? 'webm' : mime.includes('mp4') ? 'mp4' : 'wav';
     const path = filename + '.' + ext;
-    console.log('[storage] uploading', bucket+'/'+path, Math.round(blob.size/1024)+'KB');
-    const r = await fetch(SB_URL+'/storage/v1/object/'+bucket+'/'+path, {
+    const r = await fetch(SB_URL+'/storage/v1/object/audio/'+path, {
       method: 'POST',
-      headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':mime,'x-upsert':'true'},
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer '+SB_KEY,
+        'Content-Type': mime,
+        'x-upsert': 'true'
+      },
       body: blob
     });
-    if(!r.ok){const txt=await r.text();console.error('[storage] FAILED',bucket,r.status,txt);return base64DataUrl;}
-    const url = SB_URL+'/storage/v1/object/public/'+bucket+'/'+path;
-    console.log('[storage] OK ->', url);
-    return url;
-  }catch(e){console.error('[storage] error:',e);return base64DataUrl;}
+    if(!r.ok){console.error('upload failed:',r.status);return base64DataUrl;}
+    return SB_URL+'/storage/v1/object/public/audio/'+path;
+  }catch(e){
+    console.error('uploadAudio error:',e);
+    return base64DataUrl;
+  }
 }
-function uploadAudio(b64,name){return uploadToStorage(b64,name,'audio',{webm:'webm',mp4:'mp4',ogg:'ogg',wav:'wav'});}
-function uploadImage(b64,name){return uploadToStorage(b64,name,'images',{png:'png',gif:'gif',webp:'webp',jpeg:'jpg',jpg:'jpg'});}
 
 async function processAudioUrls(game) {
   const gameId = game.id || Date.now().toString();
-  const up = async (url, name, isImg=false) => {
+  
+  const uploadIfBase64 = async (url, name) => {
     if(!url || !url.startsWith('data:')) return url;
-    return isImg ? uploadImage(url, name) : uploadAudio(url, name);
+    console.log('uploading:', name, url.length, 'bytes');
+    const result = await uploadAudio(url, name);
+    console.log('uploaded:', name, '->', result.substring(0,50));
+    return result;
   };
 
-  game.introAudioUrl = await up(game.introAudioUrl, gameId+'_intro');
-  game.winAudioUrl   = await up(game.winAudioUrl,   gameId+'_win');
-
-  if(game.scenes){
-    for(let si=0;si<game.scenes.length;si++){
-      const s=game.scenes[si];
-      s.imageSrc = await up(s.imageSrc, gameId+'_img_s'+si, true);
-      if(s.zones){
-        for(let zi=0;zi<s.zones.length;zi++){
-          const z=s.zones[zi]; const p=gameId+'_s'+si+'_z'+zi;
-          z.audioQUrl=await up(z.audioQUrl,p+'_q');
-          z.audioAUrl=await up(z.audioAUrl,p+'_a');
-          if(z.discussAudios) for(let di=0;di<z.discussAudios.length;di++) z.discussAudios[di]=await up(z.discussAudios[di],p+'_d'+di);
+  // Process intro/win audio
+  game.introAudioUrl = await uploadIfBase64(game.introAudioUrl, gameId+'_intro');
+  game.winAudioUrl = await uploadIfBase64(game.winAudioUrl, gameId+'_win');
+  
+  // Process scenes
+  if(game.scenes) {
+    for(let si=0; si<game.scenes.length; si++) {
+      const scene = game.scenes[si];
+      if(scene.zones) {
+        for(let zi=0; zi<scene.zones.length; zi++) {
+          const z = scene.zones[zi];
+          const prefix = gameId+'_s'+si+'_z'+zi;
+          z.audioQUrl = await uploadIfBase64(z.audioQUrl, prefix+'_q');
+          z.audioAUrl = await uploadIfBase64(z.audioAUrl, prefix+'_a');
+          if(z.discussAudios) {
+            for(let di=0; di<z.discussAudios.length; di++) {
+              z.discussAudios[di] = await uploadIfBase64(z.discussAudios[di], prefix+'_d'+di);
+            }
+          }
         }
       }
     }
   }
-  game.imageSrc = await up(game.imageSrc, gameId+'_img', true);
-  if(game.zones){
-    for(let zi=0;zi<game.zones.length;zi++){
-      const z=game.zones[zi]; const p=gameId+'_z'+zi;
-      z.audioQUrl=await up(z.audioQUrl,p+'_q');
-      z.audioAUrl=await up(z.audioAUrl,p+'_a');
-      if(z.discussAudios) for(let di=0;di<z.discussAudios.length;di++) z.discussAudios[di]=await up(z.discussAudios[di],p+'_d'+di);
+  // Also top-level zones
+  if(game.zones) {
+    for(let zi=0; zi<game.zones.length; zi++) {
+      const z = game.zones[zi];
+      const prefix = gameId+'_z'+zi;
+      z.audioQUrl = await uploadIfBase64(z.audioQUrl, prefix+'_q');
+      z.audioAUrl = await uploadIfBase64(z.audioAUrl, prefix+'_a');
+      if(z.discussAudios) {
+        for(let di=0; di<z.discussAudios.length; di++) {
+          z.discussAudios[di] = await uploadIfBase64(z.discussAudios[di], prefix+'_d'+di);
+        }
+      }
     }
   }
   return game;
@@ -514,19 +561,14 @@ async function processAudioUrls(game) {
 async function sbSave(game) {
   const shareId = game._share || Math.random().toString(36).slice(2,10);
   const dbId = game._dbid;
-  const {_dbid, _share, _stub, ...gameData} = game;
-  const payload = {name: game.name, share_id: shareId, data: gameData};
-  const payloadStr = JSON.stringify(payload);
-  console.log('[sbSave] size:', Math.round(payloadStr.length/1024)+'KB', dbId?'PATCH':'POST');
-  if(payloadStr.length > 400000) console.warn('[sbSave] WARNING: still large - base64 may not have uploaded');
+  const payload = {name: game.name, share_id: shareId, data: {...game}};
   const url = dbId ? SB_URL+'/rest/v1/games?id=eq.'+dbId : SB_URL+'/rest/v1/games';
   const r = await fetch(url, {
     method: dbId ? 'PATCH' : 'POST',
     headers: sbHeaders({'Prefer': dbId?'':'return=representation'}),
-    body: payloadStr
+    body: JSON.stringify(payload)
   });
-  if(!r.ok){const t=await r.text();console.error('[sbSave] FAILED',r.status,t);throw new Error(r.status+': '+t);}
-  console.log('[sbSave] SUCCESS');
+  if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
   if(dbId) return {...game, _share: shareId};
   const rows = await r.json();
   return {...game, _dbid: rows[0].id, _share: shareId};
@@ -556,11 +598,7 @@ async function loadGamesFromDB() {
   // Then load from Supabase in background
   try{
     const rows = await sbGet();
-    savedGames = rows.map(r=>{
-      const game = r.data || {};
-      return {...game, _dbid:r.id, _share:r.share_id, name:r.name||game.name};
-    });
-    try{localStorage.setItem('shachaku', JSON.stringify(savedGames));}catch(e){}
+    savedGames = rows; // already lightweight stubs from sbGet
     renderHome();
   }catch(e){
     console.error('load error:',e);
@@ -577,7 +615,6 @@ let edZones=[];  // current zones being edited
 let edImgSrc='';
 let edImgEl=null;
 let edIntroAudio=null,edWinAudio=null;
-let edScenes=[],edCurScene=0; // multi-scene state
 let dMode='circle',drawing=false,dStart={x:0,y:0};
 let cvs=null,ctx=null;
 let modalIdx=-1,modalQUrl=null,modalAUrl=null;
@@ -1143,11 +1180,24 @@ function renderHome(){
   });
 }
 
+async function loadAndRun(game, action){
+  if(!game._stub){
+    if(action==='play') showIntro(game); else openEditGame(game); return;
+  }
+  toast('⏳ טוען...');
+  try{
+    const full = await sbGetFull(game._dbid);
+    const idx = savedGames.findIndex(g=>g._dbid===game._dbid);
+    if(idx>=0) savedGames[idx]=full;
+    if(action==='play') showIntro(full); else openEditGame(full);
+  }catch(e){ toast('❌ שגיאה: '+e.message); }
+}
+
 function gAction(action, id){
   const game=savedGames.find(g=>g.id===id);
   if(!game){toast('משחק לא נמצא');return;}
-  if(action==='play'){wA();showIntro(game);}
-  else if(action==='edit'){openEditGame(game);}
+  if(action==='play'){wA();loadAndRun(game,'play');}
+  else if(action==='edit'){loadAndRun(game,'edit');}
   else if(action==='share'){
     const g2=savedGames.find(x=>x.id===id);
     if(!g2?._share){toast('שמרי קודם את המשחק');return;}
@@ -1202,8 +1252,9 @@ function showIntro(game){
   curGame=game;
   document.getElementById('intro-img').src=game.imageSrc||'';
   document.getElementById('intro-title').textContent=game.introText||game.name;
-  const zones=game.zones||game.scenes?.[0]?.zones||[];
-  document.getElementById('intro-sub').textContent=zones.length+' שאלות · בוא נשחק!';
+  const allScenes=game.scenes&&game.scenes.length?game.scenes:[{zones:game.zones||[]}];
+  const totalQ=allScenes.reduce((s,sc)=>s+(sc.zones?.length||0),0);
+  document.getElementById('intro-sub').textContent=totalQ+' שאלות · בוא נשחק!';
   showScr('intro');
   setTimeout(()=>{wA();spOp(game.introAudioUrl,game.introText||game.name,null);},1000);
 }
@@ -1213,31 +1264,23 @@ function beginGame(){window.speechSynthesis?.cancel();if(curGame)startGame(curGa
 // PLAYER
 // ═══════════════════════════════════════
 function startGame(game){
-  curGame=game;curTask=0;plScore=0;wrongPer=0;tapping=false;
-  // Flatten all scenes into one task list
+  curGame=game;curTask=0;plScore=0;wrongPer=0;tapping=true; // block taps until image ready
   const scenes=game.scenes&&game.scenes.length?game.scenes:[{imageSrc:game.imageSrc,zones:game.zones||[]}];
+  curGame._scenes=scenes;
   curGame._tasks=[];
   scenes.forEach(scene=>{
     (scene.zones||[]).forEach(z=>{
       curGame._tasks.push({...z,found:false,_img:scene.imageSrc});
     });
   });
-  // Build scene nav dots if multiple scenes
+  // Scene nav bar
+  const sbar=document.getElementById('scene-bar');
+  if(sbar) sbar.classList.toggle('show', scenes.length>1);
+  // Dot nav (hidden — replaced by scene bar)
   const sceneNav=document.getElementById('scene-nav');
-  if(sceneNav){
-    if(scenes.length>1){
-      sceneNav.style.display='flex';sceneNav.innerHTML='';
-      scenes.forEach((s,i)=>{
-        const d=document.createElement('div');d.className='snav-dot';d.id='snav'+i;
-        d.textContent=i+1;
-        d.onclick=()=>jumpToScene(i);
-        sceneNav.appendChild(d);
-      });
-    } else sceneNav.style.display='none';
-  }
+  if(sceneNav) sceneNav.style.display='none';
   document.getElementById('pltitle').textContent=game.name;
   document.getElementById('plscore').textContent=0;
-  document.getElementById('plimg').src=curGame._tasks[0]?._img||game.imageSrc||'';
   document.getElementById('foundlayer').innerHTML='';
   document.getElementById('th-panel').classList.remove('show');
   thPending=null;
@@ -1248,15 +1291,32 @@ function startGame(game){
   tl.ontouchstart=e=>{e.preventDefault();if(e.touches[0])handleTap(e.touches[0]);};
   showScr('player');
   const img=document.getElementById('plimg');
-  if(img.complete&&img.naturalWidth)loadTask(0);else img.onload=()=>loadTask(0);
+  const firstSrc=curGame._tasks[0]?._img||game.imageSrc||'';
+  img.setAttribute('src',firstSrc);
+  const go=()=>loadTask(0);
+  if(img.complete&&img.naturalWidth)go();else{img.onload=go;img.onerror=go;}
 }
 
 function jumpToScene(si){
-  const scenes=curGame.scenes||[{imageSrc:curGame.imageSrc,zones:curGame.zones||[]}];
+  const scenes=curGame._scenes||curGame.scenes||[{imageSrc:curGame.imageSrc,zones:curGame.zones||[]}];
   let taskIdx=0;
   for(let i=0;i<si;i++) taskIdx+=(scenes[i]?.zones?.length||0);
   curTask=taskIdx;
   loadTask(curTask);
+}
+
+function navScene(dir){
+  const scenes=curGame._scenes||[];
+  if(!scenes.length)return;
+  // find current scene index
+  let sceneIdx=0,counted=0;
+  for(let si=0;si<scenes.length;si++){
+    counted+=(scenes[si].zones?.length||0);
+    if(curTask<counted){sceneIdx=si;break;}
+  }
+  const target=sceneIdx+dir;
+  if(target<0||target>=scenes.length)return;
+  jumpToScene(target);
 }
 
 
@@ -1266,9 +1326,6 @@ function loadTask(i){
   document.getElementById('foundlayer').innerHTML='';
   const tasks=curGame._tasks||[];
   const t=tasks[i];if(!t)return;
-  // Switch image if new scene
-  const imgEl=document.getElementById('plimg');
-  if(t._img && imgEl.src!==t._img) imgEl.src=t._img;
   document.getElementById('temoji').textContent=t.emoji||'🔍';
   document.getElementById('ttxt').textContent=t.label||t.ttsText||'מצא...';
   document.querySelectorAll('.dot').forEach((d,j)=>{d.className='dot'+(j<i?' done':j===i?' cur':'');});
@@ -1284,7 +1341,34 @@ function loadTask(i){
     snav.className='snav-dot'+(i>=sceneStart&&i<=sceneEnd?' active':allDone?' done':'');
     taskCount+=s.zones?.length||0;
   });
-  setTimeout(speakQ,500);
+  // Update scene bar
+  const scenes=curGame._scenes||[];
+  if(scenes.length>1){
+    let sceneIdx=0,counted=0;
+    for(let si=0;si<scenes.length;si++){
+      counted+=(scenes[si].zones?.length||0);
+      if(i<counted){sceneIdx=si;break;}
+    }
+    const lbl=document.getElementById('sbar-lbl');
+    const prev=document.getElementById('sbar-prev');
+    const next=document.getElementById('sbar-next');
+    if(lbl) lbl.textContent='עמוד '+(sceneIdx+1)+' מתוך '+scenes.length;
+    if(prev) prev.disabled=(sceneIdx===0);
+    if(next) next.disabled=(sceneIdx===scenes.length-1);
+  }
+  // Switch image if scene changed — block taps until loaded
+  const imgEl=document.getElementById('plimg');
+  const newSrc=t._img||curGame.imageSrc||'';
+  const curSrc=imgEl.getAttribute('src')||'';
+  if(newSrc && curSrc!==newSrc){
+    tapping=true; // block taps while new image loads
+    imgEl.onload=()=>{tapping=false;setTimeout(speakQ,500);};
+    imgEl.onerror=()=>{tapping=false;setTimeout(speakQ,500);};
+    imgEl.setAttribute('src',newSrc);
+  } else {
+    tapping=false;
+    setTimeout(speakQ,500);
+  }
 }
 function speakQ(){const tasks=curGame?._tasks||[];const t=tasks[curTask];if(!t)return;spOp(t.audioQUrl,t.ttsText||t.label,null);}
 function handleTap(e){
