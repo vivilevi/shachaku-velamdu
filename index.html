@@ -1329,20 +1329,8 @@ function loadTask(i){
   document.getElementById('temoji').textContent=t.emoji||'🔍';
   document.getElementById('ttxt').textContent=t.label||t.ttsText||'מצא...';
   document.querySelectorAll('.dot').forEach((d,j)=>{d.className='dot'+(j<i?' done':j===i?' cur':'');});
-  // Update scene nav
-  const scenes=curGame.scenes||[{imageSrc:curGame.imageSrc,zones:curGame.zones||[]}];
-  let taskCount=0;
-  scenes.forEach((s,si)=>{
-    const snav=document.getElementById('snav'+si);
-    if(!snav)return;
-    const sceneStart=taskCount;
-    const sceneEnd=taskCount+(s.zones?.length||0)-1;
-    const allDone=tasks.slice(sceneStart,sceneEnd+1).every(tt=>tt.found);
-    snav.className='snav-dot'+(i>=sceneStart&&i<=sceneEnd?' active':allDone?' done':'');
-    taskCount+=s.zones?.length||0;
-  });
-  // Update scene bar
-  const scenes=curGame._scenes||[];
+  // Update scene bar + nav
+  const scenes=curGame._scenes||curGame.scenes||[{imageSrc:curGame.imageSrc,zones:curGame.zones||[]}];
   if(scenes.length>1){
     let sceneIdx=0,counted=0;
     for(let si=0;si<scenes.length;si++){
