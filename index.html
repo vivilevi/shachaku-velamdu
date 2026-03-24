@@ -481,23 +481,21 @@ async function sbGetByShare(shareId) {
 }
 
 async function loadGamesFromDB() {
+  // Show cached games immediately
+  try{const s=localStorage.getItem('shachaku');if(s){savedGames=JSON.parse(s);renderHome();}}catch(e){}
+  // Then load from Supabase in background
   try{
     const rows = await sbGet();
     savedGames = rows.map(r=>{
       const game = r.data || {};
       return {...game, _dbid:r.id, _share:r.share_id, name:r.name||game.name};
     });
-    // Cache in localStorage as backup
-    try{
-      const light = savedGames.map(g=>({...g}));
-      localStorage.setItem('shachaku', JSON.stringify(light));
-    }catch(e){}
+    try{localStorage.setItem('shachaku', JSON.stringify(savedGames));}catch(e){}
+    renderHome();
   }catch(e){
     console.error('load error:',e);
-    // Fallback to localStorage
-    try{const s=localStorage.getItem('shachaku');if(s)savedGames=JSON.parse(s);}catch(e2){}
+    // Already showing cached - that's fine
   }
-  renderHome();
 }
 
 // ═══════════════════════════════════════
@@ -1403,10 +1401,23 @@ window.addEventListener('DOMContentLoaded',()=>{
   const params = new URLSearchParams(window.location.search);
   const playId = params.get('play');
   if(playId){
+    // Hide home, show loading immediately
+    document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+    document.getElementById('home').innerHTML=`
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px;background:linear-gradient(150deg,#667eea,#764ba2);">
+        <div style="font-size:4rem">🖼️</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.8rem;color:#fff">טוען משחק...</div>
+      </div>`;
+    document.getElementById('home').classList.add('on');
     sbGetByShare(playId).then(game=>{
-      if(!game){alert('משחק לא נמצא');return;}
-      curGame=game;showIntro(game);
-    }).catch(e=>alert('שגיאה: '+e.message));
+      if(!game){
+        document.getElementById('home').innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Fredoka One,cursive;font-size:1.5rem;color:#fff;background:#1a1a2e">😕 משחק לא נמצא</div>';
+        return;
+      }
+      showIntro(game);
+    }).catch(e=>{
+      document.getElementById('home').innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Fredoka One,cursive;font-size:1.5rem;color:#fff;background:#1a1a2e">שגיאה בטעינה</div>';
+    });
     return;
   }
   loadGamesFromDB();
