@@ -446,6 +446,64 @@ async function sbGet() {
   return r.json();
 }
 
+
+// ═══ SUPABASE STORAGE ═══
+async function uploadAudio(base64DataUrl, filename) {
+  if(!base64DataUrl || !base64DataUrl.startsWith('data:')) return base64DataUrl;
+  // Convert base64 to blob
+  const res = await fetch(base64DataUrl);
+  const blob = await res.blob();
+  const ext = blob.type.includes('webm') ? 'webm' : 'wav';
+  const path = filename + '.' + ext;
+  const r = await fetch(SB_URL+'/storage/v1/object/audio/'+path, {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer '+SB_KEY,
+      'Content-Type': blob.type,
+      'x-upsert': 'true'
+    },
+    body: blob
+  });
+  if(!r.ok) return base64DataUrl; // fallback to base64 if upload fails
+  return SB_URL+'/storage/v1/object/public/audio/'+path;
+}
+
+async function processAudioUrls(game) {
+  // Upload all base64 audio to storage and replace with URLs
+  const gameId = game.id || Date.now().toString();
+  const processZone = async (zone, zIdx, sceneIdx) => {
+    const prefix = gameId+'_s'+sceneIdx+'_z'+zIdx;
+    if(zone.audioQUrl?.startsWith('data:')) zone.audioQUrl = await uploadAudio(zone.audioQUrl, prefix+'_q');
+    if(zone.audioAUrl?.startsWith('data:')) zone.audioAUrl = await uploadAudio(zone.audioAUrl, prefix+'_a');
+    if(zone.discussAudios) {
+      zone.discussAudios = await Promise.all(zone.discussAudios.map((a,i) => 
+        a?.startsWith('data:') ? uploadAudio(a, prefix+'_d'+i) : Promise.resolve(a)
+      ));
+    }
+    return zone;
+  };
+  
+  // Process intro/win audio
+  if(game.introAudioUrl?.startsWith('data:')) game.introAudioUrl = await uploadAudio(game.introAudioUrl, gameId+'_intro');
+  if(game.winAudioUrl?.startsWith('data:')) game.winAudioUrl = await uploadAudio(game.winAudioUrl, gameId+'_win');
+  
+  // Process zones in scenes
+  if(game.scenes) {
+    for(let si=0; si<game.scenes.length; si++) {
+      const scene = game.scenes[si];
+      if(scene.zones) {
+        scene.zones = await Promise.all(scene.zones.map((z,zi) => processZone({...z}, zi, si)));
+      }
+    }
+  }
+  // Also process top-level zones
+  if(game.zones) {
+    game.zones = await Promise.all(game.zones.map((z,zi) => processZone({...z}, zi, 0)));
+  }
+  return game;
+}
+
 async function sbSave(game) {
   const shareId = game._share || Math.random().toString(36).slice(2,10);
   const dbId = game._dbid;
@@ -1027,10 +1085,13 @@ function buildGame(){
 async function doSave(){
   if(!edImgSrc){toast('❌ חסרה תמונה');return null;}
   if(!edZones.length){toast('❌ סמן לפחות אזור אחד');return null;}
-  const g=buildGame();
+  let g=buildGame();
   if(edGame){g._dbid=edGame._dbid;g._share=edGame._share;}
   const btn=document.querySelector('.tbtn.sv');
-  if(btn){btn.textContent='שומר...';btn.disabled=true;}
+  if(btn){btn.textContent='מעלה הקלטות...';btn.disabled=true;}
+  // Upload audio files to storage
+  try{g=await processAudioUrls(g);}catch(e){console.error('audio upload:',e);}
+  if(btn){btn.textContent='שומר...';}
   try{
     const saved=await sbSave(g);
     savedGames=[saved,...savedGames.filter(x=>x.id!==saved.id)];
