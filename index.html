@@ -1254,14 +1254,14 @@ function onCorrect(task){
     document.getElementById('th-panel').classList.add('show');
     thPending=()=>{
       curTask++;
-      const all=curGame._zones;
+      const all=curGame._tasks||[];
       if(curTask>=all.length)setTimeout(winScreen,400);
       else loadTask(curTask);
     };
   } else {
     setTimeout(()=>{
       spOp(task.audioAUrl,task.ttsAnswer,()=>{
-        setTimeout(()=>{curTask++;const all=curGame._zones;if(curTask>=all.length)setTimeout(winScreen,400);else loadTask(curTask);},700);
+        setTimeout(()=>{curTask++;const all=curGame._tasks||[];if(curTask>=all.length)setTimeout(winScreen,400);else loadTask(curTask);},700);
       });
     },300);
   }
