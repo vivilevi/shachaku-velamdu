@@ -460,80 +460,52 @@ async function uploadToStorage(base64DataUrl, filename, bucket, extMap) {
     let ext = 'bin';
     for(const [k,v] of Object.entries(extMap)){if(mime.includes(k)){ext=v;break;}}
     const path = filename + '.' + ext;
+    console.log('[storage] uploading', bucket+'/'+path, Math.round(blob.size/1024)+'KB');
     const r = await fetch(SB_URL+'/storage/v1/object/'+bucket+'/'+path, {
       method: 'POST',
-      headers: {
-        'apikey': SB_KEY,
-        'Authorization': 'Bearer '+SB_KEY,
-        'Content-Type': mime,
-        'x-upsert': 'true'
-      },
+      headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':mime,'x-upsert':'true'},
       body: blob
     });
-    if(!r.ok){console.error('upload failed ('+bucket+'):',r.status, await r.text());return base64DataUrl;}
-    return SB_URL+'/storage/v1/object/public/'+bucket+'/'+path;
-  }catch(e){
-    console.error('uploadToStorage error:',e);
-    return base64DataUrl;
-  }
+    if(!r.ok){const txt=await r.text();console.error('[storage] FAILED',bucket,r.status,txt);return base64DataUrl;}
+    const url = SB_URL+'/storage/v1/object/public/'+bucket+'/'+path;
+    console.log('[storage] OK ->', url);
+    return url;
+  }catch(e){console.error('[storage] error:',e);return base64DataUrl;}
 }
-
-function uploadAudio(base64DataUrl, filename){
-  return uploadToStorage(base64DataUrl, filename, 'audio', {webm:'webm', mp4:'mp4', ogg:'ogg', wav:'wav'});
-}
-function uploadImage(base64DataUrl, filename){
-  return uploadToStorage(base64DataUrl, filename, 'images', {png:'png', gif:'gif', webp:'webp', jpeg:'jpg', jpg:'jpg'});
-}
+function uploadAudio(b64,name){return uploadToStorage(b64,name,'audio',{webm:'webm',mp4:'mp4',ogg:'ogg',wav:'wav'});}
+function uploadImage(b64,name){return uploadToStorage(b64,name,'images',{png:'png',gif:'gif',webp:'webp',jpeg:'jpg',jpg:'jpg'});}
 
 async function processAudioUrls(game) {
   const gameId = game.id || Date.now().toString();
-
-  const uploadIfBase64 = async (url, name, isImage=false) => {
+  const up = async (url, name, isImg=false) => {
     if(!url || !url.startsWith('data:')) return url;
-    console.log('uploading:', name, url.length, 'chars');
-    const result = isImage ? await uploadImage(url, name) : await uploadAudio(url, name);
-    console.log('done:', name, '->', result.substring(0,60));
-    return result;
+    return isImg ? uploadImage(url, name) : uploadAudio(url, name);
   };
 
-  // Process intro/win audio
-  game.introAudioUrl = await uploadIfBase64(game.introAudioUrl, gameId+'_intro');
-  game.winAudioUrl   = await uploadIfBase64(game.winAudioUrl,   gameId+'_win');
+  game.introAudioUrl = await up(game.introAudioUrl, gameId+'_intro');
+  game.winAudioUrl   = await up(game.winAudioUrl,   gameId+'_win');
 
-  // Process scenes (upload image + audio per scene)
-  if(game.scenes) {
-    for(let si=0; si<game.scenes.length; si++) {
-      const scene = game.scenes[si];
-      scene.imageSrc = await uploadIfBase64(scene.imageSrc, gameId+'_img_s'+si, true);
-      if(scene.zones) {
-        for(let zi=0; zi<scene.zones.length; zi++) {
-          const z = scene.zones[zi];
-          const prefix = gameId+'_s'+si+'_z'+zi;
-          z.audioQUrl = await uploadIfBase64(z.audioQUrl, prefix+'_q');
-          z.audioAUrl = await uploadIfBase64(z.audioAUrl, prefix+'_a');
-          if(z.discussAudios) {
-            for(let di=0; di<z.discussAudios.length; di++) {
-              z.discussAudios[di] = await uploadIfBase64(z.discussAudios[di], prefix+'_d'+di);
-            }
-          }
+  if(game.scenes){
+    for(let si=0;si<game.scenes.length;si++){
+      const s=game.scenes[si];
+      s.imageSrc = await up(s.imageSrc, gameId+'_img_s'+si, true);
+      if(s.zones){
+        for(let zi=0;zi<s.zones.length;zi++){
+          const z=s.zones[zi]; const p=gameId+'_s'+si+'_z'+zi;
+          z.audioQUrl=await up(z.audioQUrl,p+'_q');
+          z.audioAUrl=await up(z.audioAUrl,p+'_a');
+          if(z.discussAudios) for(let di=0;di<z.discussAudios.length;di++) z.discussAudios[di]=await up(z.discussAudios[di],p+'_d'+di);
         }
       }
     }
   }
-
-  // Top-level imageSrc + zones (backwards compat)
-  game.imageSrc = await uploadIfBase64(game.imageSrc, gameId+'_img', true);
-  if(game.zones) {
-    for(let zi=0; zi<game.zones.length; zi++) {
-      const z = game.zones[zi];
-      const prefix = gameId+'_z'+zi;
-      z.audioQUrl = await uploadIfBase64(z.audioQUrl, prefix+'_q');
-      z.audioAUrl = await uploadIfBase64(z.audioAUrl, prefix+'_a');
-      if(z.discussAudios) {
-        for(let di=0; di<z.discussAudios.length; di++) {
-          z.discussAudios[di] = await uploadIfBase64(z.discussAudios[di], prefix+'_d'+di);
-        }
-      }
+  game.imageSrc = await up(game.imageSrc, gameId+'_img', true);
+  if(game.zones){
+    for(let zi=0;zi<game.zones.length;zi++){
+      const z=game.zones[zi]; const p=gameId+'_z'+zi;
+      z.audioQUrl=await up(z.audioQUrl,p+'_q');
+      z.audioAUrl=await up(z.audioAUrl,p+'_a');
+      if(z.discussAudios) for(let di=0;di<z.discussAudios.length;di++) z.discussAudios[di]=await up(z.discussAudios[di],p+'_d'+di);
     }
   }
   return game;
@@ -542,14 +514,19 @@ async function processAudioUrls(game) {
 async function sbSave(game) {
   const shareId = game._share || Math.random().toString(36).slice(2,10);
   const dbId = game._dbid;
-  const payload = {name: game.name, share_id: shareId, data: {...game}};
+  const {_dbid, _share, _stub, ...gameData} = game;
+  const payload = {name: game.name, share_id: shareId, data: gameData};
+  const payloadStr = JSON.stringify(payload);
+  console.log('[sbSave] size:', Math.round(payloadStr.length/1024)+'KB', dbId?'PATCH':'POST');
+  if(payloadStr.length > 400000) console.warn('[sbSave] WARNING: still large - base64 may not have uploaded');
   const url = dbId ? SB_URL+'/rest/v1/games?id=eq.'+dbId : SB_URL+'/rest/v1/games';
   const r = await fetch(url, {
     method: dbId ? 'PATCH' : 'POST',
     headers: sbHeaders({'Prefer': dbId?'':'return=representation'}),
-    body: JSON.stringify(payload)
+    body: payloadStr
   });
-  if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
+  if(!r.ok){const t=await r.text();console.error('[sbSave] FAILED',r.status,t);throw new Error(r.status+': '+t);}
+  console.log('[sbSave] SUCCESS');
   if(dbId) return {...game, _share: shareId};
   const rows = await r.json();
   return {...game, _dbid: rows[0].id, _share: shareId};
@@ -600,6 +577,7 @@ let edZones=[];  // current zones being edited
 let edImgSrc='';
 let edImgEl=null;
 let edIntroAudio=null,edWinAudio=null;
+let edScenes=[],edCurScene=0; // multi-scene state
 let dMode='circle',drawing=false,dStart={x:0,y:0};
 let cvs=null,ctx=null;
 let modalIdx=-1,modalQUrl=null,modalAUrl=null;
